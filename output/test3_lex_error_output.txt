@@ -1,0 +1,31 @@
+SimpleLang Compiler - compiling: tests/test3_lex_error.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS (Tokens)
+================================================================
+TYPE      VALUE               LINE  
+------------------------------------
+KEYWORD   int                 2     
+OP        =                   2     
+NUMBER    5                   2     
+DELIM     ;                   2     
+KEYWORD   int                 3     
+ID        x                   3     
+OP        =                   3     
+DELIM     ;                   3     
+KEYWORD   print               4     
+DELIM     (                   4     
+KEYWORD   int                 5     
+ID        y                   5     
+OP        =                   5     
+NUMBER    7                   5     
+NUMBER    3                   5     
+DELIM     ;                   5     
+
+Lexical Errors:
+  Lexical Error (line 2): Invalid identifier '2name'
+  Lexical Error (line 3): Malformed number '12.3.4'
+  Lexical Error (line 4): Unterminated string literal
+  Lexical Error (line 5): Invalid symbol '@'
+
+Compilation stopped at lexical phase.

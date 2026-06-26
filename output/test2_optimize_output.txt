@@ -1,0 +1,134 @@
+SimpleLang Compiler - compiling: tests/test2_optimize.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS (Tokens)
+================================================================
+TYPE      VALUE               LINE  
+------------------------------------
+KEYWORD   int                 2     
+ID        x                   2     
+OP        =                   2     
+NUMBER    3                   2     
+OP        +                   2     
+NUMBER    4                   2     
+OP        *                   2     
+NUMBER    2                   2     
+DELIM     ;                   2     
+KEYWORD   int                 3     
+ID        y                   3     
+OP        =                   3     
+ID        x                   3     
+OP        *                   3     
+NUMBER    1                   3     
+DELIM     ;                   3     
+KEYWORD   int                 4     
+ID        z                   4     
+OP        =                   4     
+ID        y                   4     
+OP        +                   4     
+NUMBER    0                   4     
+DELIM     ;                   4     
+KEYWORD   int                 5     
+ID        w                   5     
+OP        =                   5     
+ID        x                   5     
+OP        *                   5     
+NUMBER    0                   5     
+DELIM     ;                   5     
+KEYWORD   print               6     
+DELIM     (                   6     
+ID        x                   6     
+DELIM     )                   6     
+DELIM     ;                   6     
+KEYWORD   print               7     
+DELIM     (                   7     
+ID        w                   7     
+DELIM     )                   7     
+DELIM     ;                   7     
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int x
+      BinOp '+'
+        Num 3
+        BinOp '*'
+          Num 4
+          Num 2
+    VarDecl int y
+      BinOp '*'
+        Var x
+        Num 1
+    VarDecl int z
+      BinOp '+'
+        Var y
+        Num 0
+    VarDecl int w
+      BinOp '*'
+        Var x
+        Num 0
+    Print
+      Var x
+    Print
+      Var w
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)
+================================================================
+Symbol Table:
+  NAME          TYPE      
+  x             int       
+  y             int       
+  z             int       
+  w             int       
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE (Three-Address Code)
+================================================================
+    0: t1 = 4 * 2
+    1: t2 = 3 + t1
+    2: x = t2
+    3: t3 = x * 1
+    4: y = t3
+    5: t4 = y + 0
+    6: z = t4
+    7: t5 = x * 0
+    8: w = t5
+    9: print x
+   10: print w
+
+================================================================
+PHASE 5: OPTIMIZED INTERMEDIATE CODE
+================================================================
+    0: x = 11
+    1: y = 11
+    2: z = 11
+    3: w = 0
+    4: print 11
+    5: print 0
+
+Instructions before: 11, after: 6
+
+================================================================
+PHASE 6: TARGET CODE (Register-Based Assembly)
+================================================================
+    MOV 11, R1
+    MOV R1, x
+    MOV 11, R2
+    MOV R2, y
+    MOV 11, R3
+    MOV R3, z
+    MOV 0, R4
+    MOV R4, w
+    MOV 11, R5
+    PRINT R5
+    MOV 0, R6
+    PRINT R6
+
+================================================================
+COMPILATION SUCCESSFUL
+================================================================

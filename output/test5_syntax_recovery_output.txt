@@ -1,0 +1,43 @@
+SimpleLang Compiler - compiling: tests/test5_syntax_recovery.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS (Tokens)
+================================================================
+TYPE      VALUE               LINE  
+------------------------------------
+KEYWORD   int                 2     
+ID        x                   2     
+OP        =                   2     
+NUMBER    5                   2     
+OP        +                   2     
+NUMBER    3                   2     
+KEYWORD   int                 3     
+ID        y                   3     
+OP        =                   3     
+NUMBER    10                  3     
+DELIM     ;                   3     
+KEYWORD   int                 4     
+ID        z                   4     
+OP        =                   4     
+DELIM     ;                   4     
+KEYWORD   print               5     
+DELIM     (                   5     
+ID        y                   5     
+DELIM     )                   5     
+DELIM     ;                   5     
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+================================================================
+Syntax errors detected (parser used panic-mode recovery):
+  Syntax Error (line 3): expected ';' but found 'int'
+  --> Panic-mode recovery near 'int': skipped to delimiter, resuming parsing.
+  Syntax Error (line 4): unexpected token ';' in expression
+  --> Panic-mode recovery near 'next statement': skipped to delimiter, resuming parsing.
+
+Parsing recovered and continued; AST built from the valid statements:
+Program
+    Print
+      Var y
+
+Compilation stopped after syntax phase due to errors above.

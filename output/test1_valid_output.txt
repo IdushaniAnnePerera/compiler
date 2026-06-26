@@ -1,0 +1,255 @@
+SimpleLang Compiler - compiling: tests\test1_valid.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS (Tokens)
+================================================================
+TYPE      VALUE               LINE  
+------------------------------------
+KEYWORD   int                 2     
+ID        a                   2     
+OP        =                   2     
+NUMBER    5                   2     
+DELIM     ;                   2     
+KEYWORD   int                 3     
+ID        b                   3     
+OP        =                   3     
+NUMBER    10                  3     
+DELIM     ;                   3     
+KEYWORD   int                 4     
+ID        sum                 4     
+DELIM     ;                   4     
+ID        sum                 5     
+OP        =                   5     
+ID        a                   5     
+OP        +                   5     
+ID        b                   5     
+OP        *                   5     
+NUMBER    2                   5     
+DELIM     ;                   5     
+KEYWORD   float               6     
+ID        pi                  6     
+OP        =                   6     
+NUMBER    3.14                6     
+DELIM     ;                   6     
+KEYWORD   bool                7     
+ID        flag                7     
+OP        =                   7     
+ID        a                   7     
+OP        <                   7     
+ID        b                   7     
+DELIM     ;                   7     
+KEYWORD   if                  9     
+DELIM     (                   9     
+ID        flag                9     
+DELIM     )                   9     
+KEYWORD   begin               9     
+KEYWORD   print               10    
+DELIM     (                   10    
+STRING    a is smaller        10    
+DELIM     )                   10    
+DELIM     ;                   10    
+KEYWORD   print               11    
+DELIM     (                   11    
+ID        sum                 11    
+DELIM     )                   11    
+DELIM     ;                   11    
+KEYWORD   end                 12    
+KEYWORD   else                12    
+KEYWORD   begin               12    
+KEYWORD   print               13    
+DELIM     (                   13    
+STRING    a is bigger         13    
+DELIM     )                   13    
+DELIM     ;                   13    
+KEYWORD   end                 14    
+KEYWORD   int                 16    
+ID        i                   16    
+OP        =                   16    
+NUMBER    0                   16    
+DELIM     ;                   16    
+KEYWORD   while               17    
+DELIM     (                   17    
+ID        i                   17    
+OP        <                   17    
+NUMBER    3                   17    
+DELIM     )                   17    
+KEYWORD   begin               17    
+KEYWORD   print               18    
+DELIM     (                   18    
+ID        i                   18    
+DELIM     )                   18    
+DELIM     ;                   18    
+ID        i                   19    
+OP        =                   19    
+ID        i                   19    
+OP        +                   19    
+NUMBER    1                   19    
+DELIM     ;                   19    
+KEYWORD   end                 20    
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int a
+      Num 5
+    VarDecl int b
+      Num 10
+    VarDecl int sum
+    Assign sum
+      BinOp '+'
+        Var a
+        BinOp '*'
+          Var b
+          Num 2
+    VarDecl float pi
+      Num 3.14
+    VarDecl bool flag
+      BinOp '<'
+        Var a
+        Var b
+    If
+      cond:
+        Var flag
+      then:
+        Print
+          Str "a is smaller"
+        Print
+          Var sum
+      else:
+        Print
+          Str "a is bigger"
+    VarDecl int i
+      Num 0
+    While
+      cond:
+        BinOp '<'
+          Var i
+          Num 3
+      body:
+        Print
+          Var i
+        Assign i
+          BinOp '+'
+            Var i
+            Num 1
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)
+================================================================
+Symbol Table:
+  NAME          TYPE      
+  a             int       
+  b             int       
+  sum           int       
+  pi            float     
+  flag          bool      
+  i             int       
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE (Three-Address Code)
+================================================================
+    0: a = 5
+    1: b = 10
+    2: t1 = b * 2
+    3: t2 = a + t1
+    4: sum = t2
+    5: pi = 3.14
+    6: t3 = a < b
+    7: flag = t3
+    8: ifFalse flag goto L1
+    9: print "a is smaller"
+   10: print sum
+   11: goto L2
+   12: L1:
+   13: print "a is bigger"
+   14: L2:
+   15: i = 0
+   16: L3:
+   17: t4 = i < 3
+   18: ifFalse t4 goto L4
+   19: print i
+   20: t5 = i + 1
+   21: i = t5
+   22: goto L3
+   23: L4:
+
+================================================================
+PHASE 5: OPTIMIZED INTERMEDIATE CODE
+================================================================
+    0: a = 5
+    1: b = 10
+    2: sum = 25
+    3: pi = 3.14
+    4: t3 = 5 < 10
+    5: flag = t3
+    6: ifFalse flag goto L1
+    7: print "a is smaller"
+    8: print sum
+    9: goto L2
+   10: L1:
+   11: print "a is bigger"
+   12: L2:
+   13: i = 0
+   14: L3:
+   15: t4 = i < 3
+   16: ifFalse t4 goto L4
+   17: print i
+   18: t5 = i + 1
+   19: i = t5
+   20: goto L3
+   21: L4:
+
+Instructions before: 24, after: 22
+
+================================================================
+PHASE 6: TARGET CODE (Register-Based Assembly)
+================================================================
+    MOV 5, R1
+    MOV R1, a
+    MOV 10, R2
+    MOV R2, b
+    MOV 25, R3
+    MOV R3, sum
+    MOV 3.14, R4
+    MOV R4, pi
+    MOV 5, R6
+    MOV R6, R5
+    MOV 10, R7
+    CMPLT R7, R5
+    MOV R5, flag
+    MOV flag, R8
+    JZ R8, L1
+    MOV "a is smaller", R9
+    PRINT R9
+    MOV sum, R10
+    PRINT R10
+    JMP L2
+LABEL L1
+    MOV "a is bigger", R11
+    PRINT R11
+LABEL L2
+    MOV 0, R12
+    MOV R12, i
+LABEL L3
+    MOV i, R14
+    MOV R14, R13
+    MOV 3, R15
+    CMPLT R15, R13
+    JZ R13, L4
+    MOV i, R16
+    PRINT R16
+    MOV i, R18
+    MOV R18, R17
+    MOV 1, R19
+    ADD R19, R17
+    MOV R17, i
+    JMP L3
+LABEL L4
+
+================================================================
+COMPILATION SUCCESSFUL
+================================================================

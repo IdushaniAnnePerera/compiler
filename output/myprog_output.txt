@@ -1,0 +1,156 @@
+SimpleLang Compiler - compiling: myprog.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS (Tokens)
+================================================================
+TYPE      VALUE               LINE  
+------------------------------------
+KEYWORD   int                 3     
+ID        n                   3     
+OP        =                   3     
+NUMBER    5                   3     
+DELIM     ;                   3     
+KEYWORD   int                 4     
+ID        result              4     
+OP        =                   4     
+NUMBER    1                   4     
+DELIM     ;                   4     
+KEYWORD   int                 5     
+ID        i                   5     
+OP        =                   5     
+NUMBER    1                   5     
+DELIM     ;                   5     
+KEYWORD   while               7     
+DELIM     (                   7     
+ID        i                   7     
+OP        <=                  7     
+ID        n                   7     
+DELIM     )                   7     
+KEYWORD   begin               7     
+ID        result              8     
+OP        =                   8     
+ID        result              8     
+OP        *                   8     
+ID        i                   8     
+DELIM     ;                   8     
+ID        i                   9     
+OP        =                   9     
+ID        i                   9     
+OP        +                   9     
+NUMBER    1                   9     
+DELIM     ;                   9     
+KEYWORD   end                 10    
+KEYWORD   print               12    
+DELIM     (                   12    
+ID        result              12    
+DELIM     )                   12    
+DELIM     ;                   12    
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int n
+      Num 5
+    VarDecl int result
+      Num 1
+    VarDecl int i
+      Num 1
+    While
+      cond:
+        BinOp '<='
+          Var i
+          Var n
+      body:
+        Assign result
+          BinOp '*'
+            Var result
+            Var i
+        Assign i
+          BinOp '+'
+            Var i
+            Num 1
+    Print
+      Var result
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)
+================================================================
+Symbol Table:
+  NAME          TYPE      
+  n             int       
+  result        int       
+  i             int       
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE (Three-Address Code)
+================================================================
+    0: n = 5
+    1: result = 1
+    2: i = 1
+    3: L1:
+    4: t1 = i <= n
+    5: ifFalse t1 goto L2
+    6: t2 = result * i
+    7: result = t2
+    8: t3 = i + 1
+    9: i = t3
+   10: goto L1
+   11: L2:
+   12: print result
+
+================================================================
+PHASE 5: OPTIMIZED INTERMEDIATE CODE
+================================================================
+    0: n = 5
+    1: result = 1
+    2: i = 1
+    3: L1:
+    4: t1 = i <= n
+    5: ifFalse t1 goto L2
+    6: t2 = result * i
+    7: result = t2
+    8: t3 = i + 1
+    9: i = t3
+   10: goto L1
+   11: L2:
+   12: print result
+
+Instructions before: 13, after: 13
+
+================================================================
+PHASE 6: TARGET CODE (Register-Based Assembly)
+================================================================
+    MOV 5, R1
+    MOV R1, n
+    MOV 1, R2
+    MOV R2, result
+    MOV 1, R3
+    MOV R3, i
+LABEL L1
+    MOV i, R5
+    MOV R5, R4
+    MOV n, R6
+    CMPLE R6, R4
+    JZ R4, L2
+    MOV result, R8
+    MOV R8, R7
+    MOV i, R9
+    MUL R9, R7
+    MOV R7, result
+    MOV i, R11
+    MOV R11, R10
+    MOV 1, R12
+    ADD R12, R10
+    MOV R10, i
+    JMP L1
+LABEL L2
+    MOV result, R13
+    PRINT R13
+
+================================================================
+COMPILATION SUCCESSFUL
+================================================================
