@@ -51,8 +51,8 @@ class Lexer:
     def _add(self, type_, value, line, col):
         self.tokens.append(Token(type_, value, line, col))
 
-    def _error(self, msg, line):
-        self.errors.append(f"Lexical Error (line {line}): {msg}")
+    def _error(self, msg, line, col):
+        self.errors.append(f"Lexical Error (line {line}, col {col}): {msg}")
 
     def tokenize(self):
         while self.pos < len(self.src):
@@ -71,7 +71,7 @@ class Lexer:
 
             # multi-line comment  /* ... */
             if ch == "/" and self._peek(1) == "*":
-                start = self.line
+                start, start_col = self.line, self.col
                 self._advance(); self._advance()
                 closed = False
                 while self.pos < len(self.src):
@@ -81,7 +81,7 @@ class Lexer:
                         break
                     self._advance()
                 if not closed:
-                    self._error("Unterminated multi-line comment", start)
+                    self._error("Unterminated multi-line comment", start, start_col)
                 continue
 
             line, col = self.line, self.col
@@ -109,13 +109,13 @@ class Lexer:
                         bad = lexeme
                         while self._peek().isalnum() or self._peek() == "_":
                             bad += self._advance()
-                        self._error(f"Invalid identifier '{bad}'", line)
+                        self._error(f"Invalid identifier '{bad}'", line, col)
                     else:
                         self._add("NUMBER", int(lexeme), line, col)
                 elif dots == 1 and not lexeme.endswith("."):
                     self._add("NUMBER", float(lexeme), line, col)
                 else:
-                    self._error(f"Malformed number '{lexeme}'", line)
+                    self._error(f"Malformed number '{lexeme}'", line, col)
                 continue
 
             # string literals
@@ -135,7 +135,7 @@ class Lexer:
                 if terminated:
                     self._add("STRING", s, line, col)
                 else:
-                    self._error("Unterminated string literal", line)
+                    self._error("Unterminated string literal", line, col)
                 continue
 
             # operators and delimiters (longest match first)
@@ -156,7 +156,7 @@ class Lexer:
                 continue
 
             # anything else is illegal
-            self._error(f"Invalid symbol '{ch}'", line)
+            self._error(f"Invalid symbol '{ch}'", line, col)
             self._advance()
 
         self._add("EOF", None, self.line, self.col)
