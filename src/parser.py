@@ -3,28 +3,33 @@ Phase 2: Syntax Analyzer (Parser)
 A recursive-descent parser that consumes the token stream and builds an AST,
 following this grammar:
 
-    program     -> stmt*
-    stmt        -> var_decl | assign | print | if | while | block
-    var_decl    -> type ID ('=' expr)? ';'
-    assign      -> ID '=' expr ';'
-    print       -> 'print' '(' expr ')' ';'
-    if          -> 'if' '(' expr ')' block ('else' block)?
-    while       -> 'while' '(' expr ')' block
-    block       -> 'begin' stmt* 'end'
-    expr        -> logic_or
-    logic_or    -> logic_and ('||' logic_and)*
-    logic_and   -> equality ('&&' equality)*
-    equality    -> relational (('=='|'!=') relational)*
-    relational  -> additive (('<'|'>'|'<='|'>=') additive)*
-    additive    -> term (('+'|'-') term)*
-    term        -> unary (('*'|'/') unary)*
-    unary       -> ('!'|'-') unary | primary
-    primary     -> NUMBER | STRING | true | false | ID | '(' expr ')'
+    program      -> stmt*
+    stmt         -> arr_decl | var_decl | arr_assign | assign
+                  | print | if | while | block
+    arr_decl     -> type ID '[' NUMBER ']' ';'
+    var_decl     -> type ID ('=' expr)? ';'
+    arr_assign   -> ID '[' expr ']' '=' expr ';'
+    assign       -> ID '=' expr ';'
+    print        -> 'print' '(' expr ')' ';'
+    if           -> 'if' '(' expr ')' block ('else' block)?
+    while        -> 'while' '(' expr ')' block
+    block        -> 'begin' stmt* 'end'
+    expr         -> logic_or
+    logic_or     -> logic_and ('||' logic_and)*
+    logic_and    -> equality ('&&' equality)*
+    equality     -> relational (('=='|'!=') relational)*
+    relational   -> additive (('<'|'>'|'<='|'>=') additive)*
+    additive     -> term (('+'|'-') term)*
+    term         -> unary (('*'|'/') unary)*
+    unary        -> ('!'|'-') unary | primary
+    primary      -> NUMBER | STRING | true | false
+                  | ID '[' expr ']' | ID | '(' expr ')'
 """
 
 from ast_nodes import (
     Program, VarDecl, Assign, Print, If, While,
-    BinOp, UnaryOp, Num, Bool, Str, Var
+    BinOp, UnaryOp, Num, Bool, Str, Var,
+    ArrayDecl, ArrayAccess, ArrayAssign,
 )
 
 TYPES = {"int", "float", "bool"}
@@ -119,6 +124,17 @@ class Parser:
     def _var_decl(self):
         ttok = self._eat("KEYWORD")
         name = self._eat("ID").value
+        if self._at("DELIM", "["):
+            self._eat("DELIM", "[")
+            size_tok = self._eat("NUMBER")
+            if not isinstance(size_tok.value, int) or size_tok.value <= 0:
+                raise SyntaxError_(
+                    f"Syntax Error (line {size_tok.line}): "
+                    f"array size must be a positive integer"
+                )
+            self._eat("DELIM", "]")
+            self._eat("DELIM", ";")
+            return ArrayDecl(ttok.value, name, size_tok.value, ttok.line)
         init = None
         if self._at("OP", "="):
             self._eat("OP", "=")
@@ -128,6 +144,14 @@ class Parser:
 
     def _assign(self):
         name_tok = self._eat("ID")
+        if self._at("DELIM", "["):
+            self._eat("DELIM", "[")
+            index = self._expr()
+            self._eat("DELIM", "]")
+            self._eat("OP", "=")
+            expr = self._expr()
+            self._eat("DELIM", ";")
+            return ArrayAssign(name_tok.value, index, expr, name_tok.line)
         self._eat("OP", "=")
         expr = self._expr()
         self._eat("DELIM", ";")
@@ -235,8 +259,14 @@ class Parser:
             self.pos += 1
             return Bool(t.value == "true", t.line)
         if t.type == "ID":
+            name = t.value
             self.pos += 1
-            return Var(t.value, t.line)
+            if self._at("DELIM", "["):
+                self._eat("DELIM", "[")
+                index = self._expr()
+                self._eat("DELIM", "]")
+                return ArrayAccess(name, index, t.line)
+            return Var(name, t.line)
         if self._at("DELIM", "("):
             self._eat("DELIM", "(")
             node = self._expr()

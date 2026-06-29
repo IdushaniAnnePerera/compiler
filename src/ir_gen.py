@@ -6,7 +6,8 @@ Each instruction is a tuple-like Quad: (op, arg1, arg2, result).
 
 from ast_nodes import (
     VarDecl, Assign, Print, If, While,
-    BinOp, UnaryOp, Num, Bool, Str, Var
+    BinOp, UnaryOp, Num, Bool, Str, Var,
+    ArrayDecl, ArrayAccess, ArrayAssign,
 )
 
 
@@ -40,6 +41,13 @@ class Quad:
             return f"print {a1}"
         if self.op == "shl":
             return f"{self.result} = {a1} << {a2}"
+        if self.op == "alloc_arr":
+            return f"alloc_arr {a1}[{a2}]"
+        if self.op == "load_arr":
+            return f"{self.result} = {a1}[{a2}]"
+        if self.op == "store_arr":
+            # arg1=arr, arg2=idx, result=value_place
+            return f"{a1}[{a2}] = {self.result}"
         return f"{self.op} {a1} {a2} {self.result}"
 
 
@@ -70,6 +78,13 @@ class IRGenerator:
             if node.init is not None:
                 place = self._expr(node.init)
                 self._emit("=", place, None, node.name)
+        elif isinstance(node, ArrayDecl):
+            self._emit("alloc_arr", node.name, node.size)
+        elif isinstance(node, ArrayAssign):
+            idx   = self._expr(node.index)
+            val   = self._expr(node.expr)
+            # store_arr: arg1=array_name, arg2=index_place, result=value_place
+            self._emit("store_arr", node.name, idx, val)
         elif isinstance(node, Assign):
             place = self._expr(node.expr)
             self._emit("=", place, None, node.name)
@@ -115,6 +130,12 @@ class IRGenerator:
             return f'"{node.value}"'
         if isinstance(node, Var):
             return node.name
+        if isinstance(node, ArrayAccess):
+            idx = self._expr(node.index)
+            t = self._new_temp()
+            # load_arr: arg1=array_name, arg2=index_place, result=dest_temp
+            self._emit("load_arr", node.name, idx, t)
+            return t
         if isinstance(node, UnaryOp):
             a = self._expr(node.operand)
             t = self._new_temp()

@@ -86,3 +86,26 @@ class Var(Node):
     def __init__(self, name, line):
         self.name = name
         self.line = line
+
+
+class ArrayDecl(Node):            # int arr[5];
+    def __init__(self, var_type, name, size, line):
+        self.var_type = var_type
+        self.name = name
+        self.size = size           # integer literal
+        self.line = line
+
+
+class ArrayAccess(Node):          # arr[i]  (read)
+    def __init__(self, name, index, line):
+        self.name = name
+        self.index = index         # expression node
+        self.line = line
+
+
+class ArrayAssign(Node):          # arr[i] = expr;
+    def __init__(self, name, index, expr, line):
+        self.name = name
+        self.index = index         # expression node
+        self.expr = expr
+        self.line = line

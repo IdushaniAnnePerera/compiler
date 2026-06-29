@@ -116,4 +116,17 @@ def generate_target(code):
         elif q.op == "print":
             rs = load(q.arg1)
             asm.append(f"PRINT {rs}")
+        elif q.op == "alloc_arr":
+            # q.arg1 = array name, q.arg2 = size
+            asm.append(f"ALLOC {q.arg1}, {q.arg2}")
+        elif q.op == "load_arr":
+            # t = arr[idx]  — q.arg1=arr, q.arg2=idx, q.result=dest_temp
+            rd    = ra.reg(q.result)
+            r_idx = load(q.arg2)
+            asm.append(f"LOAD_ARR {q.arg1}, {r_idx}, {rd}")
+        elif q.op == "store_arr":
+            # arr[idx] = val  — q.arg1=arr, q.arg2=idx, q.result=val_place
+            r_idx = load(q.arg2)
+            r_val = load(q.result)
+            asm.append(f"STORE_ARR {q.arg1}, {r_idx}, {r_val}")
     return asm

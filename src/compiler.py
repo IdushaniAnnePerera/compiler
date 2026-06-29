@@ -69,7 +69,7 @@ def compile_source(src, sink):
     _dump_ast(program, sink)
 
     # ---------- Phase 3: Semantic ----------
-    banner("PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)", sink)
+    banner("PHASE 3: SEMANTIC ANALYSIS (Scope, Type Checks & Array Bounds)", sink)
     analyzer = SemanticAnalyzer()
     table, sem_errors = analyzer.analyze(program)
     sink.write("Symbol Table:\n")
@@ -131,7 +131,8 @@ def compile_source(src, sink):
 
 def _dump_ast(node, sink, indent=1):
     from ast_nodes import (Program, VarDecl, Assign, Print, If, While,
-                           BinOp, UnaryOp, Num, Bool, Str, Var)
+                           BinOp, UnaryOp, Num, Bool, Str, Var,
+                           ArrayDecl, ArrayAccess, ArrayAssign)
     pad = "  " * indent
     if isinstance(node, Program):
         sink.write("Program\n")
@@ -178,6 +179,17 @@ def _dump_ast(node, sink, indent=1):
         sink.write(f'{pad}Str "{node.value}"\n')
     elif isinstance(node, Var):
         sink.write(f"{pad}Var {node.name}\n")
+    elif isinstance(node, ArrayDecl):
+        sink.write(f"{pad}ArrayDecl {node.var_type} {node.name}[{node.size}]\n")
+    elif isinstance(node, ArrayAccess):
+        sink.write(f"{pad}ArrayAccess {node.name}[\n")
+        _dump_ast(node.index, sink, indent + 1)
+        sink.write(f"{pad}]\n")
+    elif isinstance(node, ArrayAssign):
+        sink.write(f"{pad}ArrayAssign {node.name}[\n")
+        _dump_ast(node.index, sink, indent + 1)
+        sink.write(f"{pad}] =\n")
+        _dump_ast(node.expr, sink, indent + 1)
 
 
 def main():
@@ -196,7 +208,7 @@ def main():
     import io
     buf = io.StringIO()
     buf.write(f"SimpleLang Compiler - compiling: {src_path}\n")
-    compile_source(src, buf)
+    ok = compile_source(src, buf)
     result = buf.getvalue()
 
     print(result)
@@ -204,6 +216,7 @@ def main():
         with open(out_path, "w") as f:
             f.write(result)
         print(f"\n[Output written to {out_path}]")
+    sys.exit(0 if ok else 1)
 
 
 if __name__ == "__main__":

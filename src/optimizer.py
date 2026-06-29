@@ -26,10 +26,28 @@ from ir_gen import Quad
 
 ARITH        = {"+", "-", "*", "/"}
 BINARY_OPS   = {"+", "-", "*", "/", "<", ">", "<=", ">=", "==", "!=", "&&", "||"}
-SIDE_EFFECTS = {"goto", "ifFalse", "label", "print"}
+SIDE_EFFECTS = {"goto", "ifFalse", "label", "print", "alloc_arr", "store_arr"}
+
+# Ops where the 'result' field is a value *consumed* (not produced).
+# These must be counted as uses in liveness analysis.
+_RESULT_IS_CONSUMED = {"store_arr"}
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
+
+def _count_uses(code):
+    """Count how many times each name is used as an operand across all quads.
+    For store_arr, also counts the result field because it holds the value
+    being consumed (not a value being defined)."""
+    uses = {}
+    for q in code:
+        for a in (q.arg1, q.arg2):
+            if isinstance(a, str):
+                uses[a] = uses.get(a, 0) + 1
+        if q.op in _RESULT_IS_CONSUMED and isinstance(q.result, str):
+            uses[q.result] = uses.get(q.result, 0) + 1
+    return uses
+
 
 def _is_const(v):
     if isinstance(v, (int, float)):
@@ -155,11 +173,7 @@ def dead_code_elimination(code, report):
     changed = True
     while changed:
         changed = False
-        uses = {}
-        for q in code:
-            for a in (q.arg1, q.arg2):
-                if isinstance(a, str):
-                    uses[a] = uses.get(a, 0) + 1
+        uses = _count_uses(code)
 
         new_code = []
         for q in code:
@@ -541,11 +555,7 @@ def _algebraic_simplify(code, report):
 
 def _eliminate_dead_copies(code, report):
     """Remove temporaries (t…) assigned but never used as an operand."""
-    uses = {}
-    for q in code:
-        for a in (q.arg1, q.arg2):
-            if isinstance(a, str):
-                uses[a] = uses.get(a, 0) + 1
+    uses = _count_uses(code)
     out = []
     for q in code:
         if (q.op == "=" and isinstance(q.result, str)

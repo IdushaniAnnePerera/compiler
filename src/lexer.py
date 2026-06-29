@@ -150,7 +150,7 @@ class Lexer:
                 self._add("OP", ch, line, col)
                 continue
 
-            if ch in "(){};,":
+            if ch in "()[]{};,":
                 self._advance()
                 self._add("DELIM", ch, line, col)
                 continue
