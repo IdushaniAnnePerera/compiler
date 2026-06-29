@@ -38,6 +38,8 @@ class Quad:
             return f"ifFalse {a1} goto {self.result}"
         if self.op == "print":
             return f"print {a1}"
+        if self.op == "shl":
+            return f"{self.result} = {a1} << {a2}"
         return f"{self.op} {a1} {a2} {self.result}"
 
 

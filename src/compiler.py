@@ -21,7 +21,7 @@ from lexer import Lexer
 from parser import Parser, SyntaxError_
 from semantic import SemanticAnalyzer
 from ir_gen import IRGenerator
-from optimizer import optimize
+from optimizer import optimize, identify_basic_blocks
 from codegen import generate_target
 
 
@@ -92,8 +92,28 @@ def compile_source(src, sink):
         sink.write(f"  {i:>3}: {q}\n")
 
     # ---------- Phase 5: Optimization ----------
-    banner("PHASE 5: OPTIMIZED INTERMEDIATE CODE", sink)
-    opt = optimize(code)
+    banner("PHASE 5: OPTIMIZATION (Lecture 9)", sink)
+
+    # 5a — Basic blocks of the unoptimized TAC
+    blocks = identify_basic_blocks(code)
+    sink.write(f"\nBasic Blocks ({len(blocks)} total, on unoptimized TAC):\n")
+    for k, blk in enumerate(blocks):
+        sink.write(f"  Block {k + 1}:\n")
+        for q in blk:
+            sink.write(f"    {q}\n")
+
+    # 5b — Run all optimization passes
+    opt, report = optimize(code)
+
+    sink.write(f"\nOptimization Report ({len(report)} actions):\n")
+    if report:
+        for line in report:
+            sink.write(f"  {line}\n")
+    else:
+        sink.write("  (no optimizations applied)\n")
+
+    # 5c — Final optimized TAC
+    sink.write(f"\nOptimized TAC:\n")
     for i, q in enumerate(opt):
         sink.write(f"  {i:>3}: {q}\n")
     sink.write(f"\nInstructions before: {len(code)}, after: {len(opt)}\n")

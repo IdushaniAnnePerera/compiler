@@ -81,6 +81,12 @@ def generate_target(code):
             asm.append(f"MOV {r1}, {rd}")
             r2 = load(q.arg2)
             asm.append(f"{LOGIC[q.op]} {r2}, {rd}")
+        elif q.op == "shl":
+            # Strength-reduced left-shift: result = arg1 << arg2 (literal count)
+            rd = ra.reg(q.result)
+            r1 = load(q.arg1)
+            asm.append(f"MOV {r1}, {rd}")
+            asm.append(f"SHL {q.arg2}, {rd}")
         elif q.op == "uminus":
             rd = ra.reg(q.result)
             r1 = load(q.arg1)
@@ -92,9 +98,14 @@ def generate_target(code):
             asm.append(f"MOV {r1}, {rd}")
             asm.append(f"NOT {rd}")
         elif q.op == "=":
-            # result = arg1   (store into a variable)
+            # result = arg1
+            # If the destination is a temp it lives in a register; otherwise store to variable.
             rs = load(q.arg1)
-            asm.append(f"MOV {rs}, {q.result}")
+            if _is_temp(q.result):
+                rd = ra.reg(q.result)
+                asm.append(f"MOV {rs}, {rd}")
+            else:
+                asm.append(f"MOV {rs}, {q.result}")
         elif q.op == "label":
             asm.append(f"LABEL {q.result}")
         elif q.op == "goto":
