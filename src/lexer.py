@@ -152,7 +152,7 @@ class Lexer:
                     self._advance(); self._advance()   # consume "/*"
                     state = _S_CBLK
 
-                elif ch in "+-*/=<>!":
+                elif ch in "+-*/=<>!&|":
                     lexeme = self._advance()
                     state  = _S_OP
 

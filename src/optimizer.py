@@ -77,6 +77,8 @@ def _is_const(v):
 def _num(v):
     if isinstance(v, (int, float)):
         return v
+    if isinstance(v, str) and (v in ("true", "false") or v.startswith('"')):
+        return v   # boolean / string literals: keep as-is, not numeric
     f = float(v)
     return int(f) if f.is_integer() else f
 
