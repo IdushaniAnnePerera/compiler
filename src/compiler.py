@@ -9,7 +9,10 @@ Runs the full 6-phase pipeline:
   6. Target Code Gen         (Register-based assembly + AddressDescriptors + AR)
 
 Usage:
-    python compiler.py <source_file> [-o output_file]
+    python compiler.py <source_file> [--phase N] [-o output_file]
+
+    --phase N   Run only up to phase N (1-6) then stop.
+                Omit to run all six phases.
 """
 
 import sys
@@ -35,7 +38,7 @@ def banner(title, sink):
     sink.write(LINE + "\n")
 
 
-def compile_source(src, sink):
+def compile_source(src, sink, stop_at=6):
     # ── Phase 1: Lexical Analysis ─────────────────────────────────────────────
     banner("PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)", sink)
     lexer = Lexer(src)
@@ -55,6 +58,9 @@ def compile_source(src, sink):
         sink.write("\nCompilation stopped at lexical phase.\n")
         return False
 
+    if stop_at == 1:
+        return True
+
     # ── Phase 2: Syntax Analysis ──────────────────────────────────────────────
     banner("PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)", sink)
     parser = Parser(tokens)
@@ -71,6 +77,9 @@ def compile_source(src, sink):
 
     sink.write("Parsing successful. No syntax errors. AST built.\n")
     _dump_ast(program, sink)
+
+    if stop_at == 2:
+        return True
 
     # ── Phase 3: Semantic Analysis ────────────────────────────────────────────
     banner("PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)", sink)
@@ -94,12 +103,18 @@ def compile_source(src, sink):
         return False
     sink.write("\nNo semantic errors.\n")
 
+    if stop_at == 3:
+        return True
+
     # ── Phase 4: Intermediate Code Generation ─────────────────────────────────
     banner("PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)", sink)
     ir = IRGenerator()
     code = ir.generate(program)
     for i, q in enumerate(code):
         sink.write(f"  {i:>3}: {q}\n")
+
+    if stop_at == 4:
+        return True
 
     # ── Phase 5: Optimization ─────────────────────────────────────────────────
     banner("PHASE 5: OPTIMIZATION  (Lecture 9)", sink)
@@ -180,6 +195,9 @@ def compile_source(src, sink):
     for i, q in enumerate(opt):
         sink.write(f"  {i:>3}: {q}\n")
     sink.write(f"\nInstructions before: {len(code)}, after: {len(opt)}\n")
+
+    if stop_at == 5:
+        return True
 
     # ── Phase 6: Target Code Generation ──────────────────────────────────────
     banner("PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)", sink)
@@ -273,10 +291,22 @@ def _dump_ast(node, sink, indent=1):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python compiler.py <source_file> [-o output_file]")
+        print("Usage: python compiler.py <source_file> [--phase N] [-o output_file]")
         sys.exit(1)
 
     src_path = sys.argv[1]
+
+    stop_at = 6
+    if "--phase" in sys.argv:
+        idx = sys.argv.index("--phase")
+        try:
+            stop_at = int(sys.argv[idx + 1])
+            if stop_at not in range(1, 7):
+                raise ValueError
+        except (IndexError, ValueError):
+            print("Error: --phase requires a number between 1 and 6")
+            sys.exit(1)
+
     out_path = None
     if "-o" in sys.argv:
         out_path = sys.argv[sys.argv.index("-o") + 1]
@@ -287,7 +317,9 @@ def main():
     import io
     buf = io.StringIO()
     buf.write(f"SimpleLang Compiler — compiling: {src_path}\n")
-    ok = compile_source(src, buf)
+    if stop_at < 6:
+        buf.write(f"(running up to Phase {stop_at} only)\n")
+    ok = compile_source(src, buf, stop_at)
     result = buf.getvalue()
 
     print(result)
