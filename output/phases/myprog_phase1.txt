@@ -1,5 +1,5 @@
 ﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\myprog.sl
-(running up to Phase 1 only)
+(showing Phase 1 output only)
 
 ================================================================
 PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)

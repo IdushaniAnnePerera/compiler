@@ -5,28 +5,31 @@ Runs the full 6-phase pipeline:
   2. Syntax Analysis         (Recursive-Descent Parser + Panic-Mode recovery)
   3. Semantic Analysis       (Scope/Type/Bounds checks; HashTable symbol table)
   4. Intermediate Code Gen   (Three-Address Code / Quadruples)
-  5. Optimization            (Basic blocks, CFG, DAG, Liveness, + 7 passes)
+  5. Optimization            (Basic blocks, CFG, DAG, Liveness, + 9 passes)
   6. Target Code Gen         (Register-based assembly + AddressDescriptors + AR)
 
 Usage:
     python compiler.py <source_file> [--phase N] [-o output_file]
 
-    --phase N   Run only up to phase N (1-6) then stop.
-                Omit to run all six phases.
+    --phase N   Show output for phase N only (1-6).
+                Each phase still runs all prior phases internally,
+                but only phase N's output is printed.
+                Omit to run and show all six phases.
 """
 
 import sys
 import os
+import io
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from lexer   import Lexer
-from parser  import Parser, SyntaxError_
+from lexer    import Lexer
+from parser   import Parser, SyntaxError_
 from semantic import SemanticAnalyzer
-from ir_gen  import IRGenerator
+from ir_gen   import IRGenerator
 from optimizer import (optimize, identify_basic_blocks,
                        build_cfg, build_dag, liveness_analysis)
-from codegen import generate_target
+from codegen  import generate_target
 
 
 LINE = "=" * 64
@@ -38,120 +41,151 @@ def banner(title, sink):
     sink.write(LINE + "\n")
 
 
-def compile_source(src, sink, stop_at=6):
+def compile_source(src, sink, phase_only=None):
+    """
+    Compile src through all required phases.
+
+    phase_only=None  → write every phase's output to sink (full pipeline).
+    phase_only=N     → write only phase N's output to sink.
+                       Earlier phases still run (each needs the previous
+                       phase's result) but their output is discarded.
+                       If compilation fails before reaching phase N,
+                       the failing phase's error output is shown instead.
+    """
+
+    # One buffer per phase; we decide at each exit which one(s) to flush.
+    b = [None] + [io.StringIO() for _ in range(6)]   # b[1] … b[6]
+
+    def emit(reached):
+        """Flush the right buffer(s) to sink."""
+        if phase_only is None:
+            for i in range(1, reached + 1):
+                sink.write(b[i].getvalue())
+        elif phase_only <= reached:
+            # Requested phase was reached successfully — show it alone.
+            sink.write(b[phase_only].getvalue())
+        else:
+            # Compilation failed before the requested phase — show the error.
+            sink.write(b[reached].getvalue())
+
     # ── Phase 1: Lexical Analysis ─────────────────────────────────────────────
-    banner("PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)", sink)
+    banner("PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)", b[1])
     lexer = Lexer(src)
     tokens, lex_errors = lexer.tokenize()
 
-    sink.write(f"{'TYPE':<12}{'VALUE':<22}{'LINE':<6}{'COL'}\n")
-    sink.write("-" * 48 + "\n")
+    b[1].write(f"{'TYPE':<12}{'VALUE':<22}{'LINE':<6}{'COL'}\n")
+    b[1].write("-" * 48 + "\n")
     for t in tokens:
         if t.type == "EOF":
             continue
-        sink.write(f"{t.type:<12}{str(t.value):<22}{t.line:<6}{t.col}\n")
+        b[1].write(f"{t.type:<12}{str(t.value):<22}{t.line:<6}{t.col}\n")
 
     if lex_errors:
-        sink.write("\nLexical Errors:\n")
+        b[1].write("\nLexical Errors:\n")
         for e in lex_errors:
-            sink.write("  " + e + "\n")
-        sink.write("\nCompilation stopped at lexical phase.\n")
+            b[1].write("  " + e + "\n")
+        b[1].write("\nCompilation stopped at lexical phase.\n")
+        emit(1)
         return False
 
-    if stop_at == 1:
+    if phase_only == 1:
+        emit(1)
         return True
 
     # ── Phase 2: Syntax Analysis ──────────────────────────────────────────────
-    banner("PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)", sink)
+    banner("PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)", b[2])
     parser = Parser(tokens)
     program, syn_errors = parser.parse()
 
     if syn_errors:
-        sink.write("Syntax errors (parser used panic-mode recovery):\n")
+        b[2].write("Syntax errors (parser used panic-mode recovery):\n")
         for e in syn_errors:
-            sink.write(("  " + e if not e.lstrip().startswith("-->") else e) + "\n")
-        sink.write("\nParsing recovered and continued; AST built from valid statements:\n")
-        _dump_ast(program, sink)
-        sink.write("\nCompilation stopped after syntax phase due to errors above.\n")
+            b[2].write(("  " + e if not e.lstrip().startswith("-->") else e) + "\n")
+        b[2].write("\nParsing recovered and continued; AST built from valid statements:\n")
+        _dump_ast(program, b[2])
+        b[2].write("\nCompilation stopped after syntax phase due to errors above.\n")
+        emit(2)
         return False
 
-    sink.write("Parsing successful. No syntax errors. AST built.\n")
-    _dump_ast(program, sink)
+    b[2].write("Parsing successful. No syntax errors. AST built.\n")
+    _dump_ast(program, b[2])
 
-    if stop_at == 2:
+    if phase_only == 2:
+        emit(2)
         return True
 
     # ── Phase 3: Semantic Analysis ────────────────────────────────────────────
-    banner("PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)", sink)
+    banner("PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)", b[3])
     analyzer = SemanticAnalyzer()
     table, sem_errors = analyzer.analyze(program)
 
-    sink.write("Symbol Table  (backed by hand-coded HashTable, DJB2 hash):\n")
-    sink.write(f"  {'NAME':<14}{'TYPE':<14}{'SIZE(B)':<10}{'OFFSET(B)'}\n")
-    sink.write("  " + "-" * 46 + "\n")
+    b[3].write("Symbol Table  (backed by hand-coded HashTable, DJB2 hash):\n")
+    b[3].write(f"  {'NAME':<14}{'TYPE':<14}{'SIZE(B)':<10}{'OFFSET(B)'}\n")
+    b[3].write("  " + "-" * 46 + "\n")
     for name, entry in table.symbols.items():
-        sink.write(
+        b[3].write(
             f"  {name:<14}{entry.type_str:<14}{entry.size:<10}{entry.offset}\n"
         )
-    sink.write(f"\n  Total activation-record size: {table.total_size} bytes\n")
+    b[3].write(f"\n  Total activation-record size: {table.total_size} bytes\n")
 
     if sem_errors:
-        sink.write("\nSemantic Errors:\n")
+        b[3].write("\nSemantic Errors:\n")
         for e in sem_errors:
-            sink.write("  " + e + "\n")
-        sink.write("\nCompilation stopped at semantic phase.\n")
+            b[3].write("  " + e + "\n")
+        b[3].write("\nCompilation stopped at semantic phase.\n")
+        emit(3)
         return False
-    sink.write("\nNo semantic errors.\n")
 
-    if stop_at == 3:
+    b[3].write("\nNo semantic errors.\n")
+
+    if phase_only == 3:
+        emit(3)
         return True
 
     # ── Phase 4: Intermediate Code Generation ─────────────────────────────────
-    banner("PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)", sink)
+    banner("PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)", b[4])
     ir = IRGenerator()
     code = ir.generate(program)
     for i, q in enumerate(code):
-        sink.write(f"  {i:>3}: {q}\n")
+        b[4].write(f"  {i:>3}: {q}\n")
 
-    if stop_at == 4:
+    if phase_only == 4:
+        emit(4)
         return True
 
     # ── Phase 5: Optimization ─────────────────────────────────────────────────
-    banner("PHASE 5: OPTIMIZATION  (Lecture 9)", sink)
+    banner("PHASE 5: OPTIMIZATION  (Lecture 9)", b[5])
 
-    # 5a — Basic blocks of unoptimized TAC
     blocks = identify_basic_blocks(code)
-    sink.write(f"\nBasic Blocks ({len(blocks)} total):\n")
+    b[5].write(f"\nBasic Blocks ({len(blocks)} total):\n")
     for k, blk in enumerate(blocks):
-        sink.write(f"  Block {k}:\n")
+        b[5].write(f"  Block {k}:\n")
         for q in blk:
-            sink.write(f"    {q}\n")
+            b[5].write(f"    {q}\n")
 
-    # 5b — Control Flow Graph
     cfg_nodes = build_cfg(blocks)
-    sink.write(f"\nControl Flow Graph ({len(cfg_nodes)} nodes):\n")
+    b[5].write(f"\nControl Flow Graph ({len(cfg_nodes)} nodes):\n")
     for node in cfg_nodes:
         lbl = ""
         if node.quads and node.quads[0].op == "label":
             lbl = f"  [{node.quads[0].result}]"
         pred_str = str(node.predecessors) if node.predecessors else "entry"
         succ_str = str(node.successors)   if node.successors   else "exit"
-        sink.write(
+        b[5].write(
             f"  Block {node.block_id}{lbl:<12}  "
             f"pred={pred_str:<14}  succ={succ_str}\n"
         )
 
-    # 5c — DAG analysis per basic block
-    sink.write(f"\nDAG Analysis per Basic Block:\n")
+    b[5].write(f"\nDAG Analysis per Basic Block:\n")
     total_cse = 0
     for k, blk in enumerate(blocks):
         dag_nodes, cse = build_dag(blk)
         total_cse += cse
-        leaves  = [n for n in dag_nodes if n.op == "leaf"]
-        ops     = [n for n in dag_nodes if n.op != "leaf"]
-        sink.write(f"  Block {k} ({len(blk)} quad(s)):\n")
+        leaves = [n for n in dag_nodes if n.op == "leaf"]
+        ops    = [n for n in dag_nodes if n.op != "leaf"]
+        b[5].write(f"  Block {k} ({len(blk)} quad(s)):\n")
         if leaves:
-            sink.write(
+            b[5].write(
                 "    Leaf nodes : " +
                 ", ".join(str(n.value) for n in leaves) + "\n"
             )
@@ -162,63 +196,63 @@ def compile_source(src, sink, stop_at=6):
             r_str = (str(n.right.value) if n.right and n.right.op == "leaf"
                      else f"#{n.right.uid}" if n.right else "")
             if r_str:
-                sink.write(f"    #{n.uid}{lbl} = {l_str} {n.op} {r_str}\n")
+                b[5].write(f"    #{n.uid}{lbl} = {l_str} {n.op} {r_str}\n")
             else:
-                sink.write(f"    #{n.uid}{lbl} = {n.op}({l_str})\n")
+                b[5].write(f"    #{n.uid}{lbl} = {n.op}({l_str})\n")
         if cse:
-            sink.write(f"    *** {cse} common subexpression(s) detected ***\n")
+            b[5].write(f"    *** {cse} common subexpression(s) detected ***\n")
         if not leaves and not ops:
-            sink.write("    (no arithmetic expressions — control/memory ops only)\n")
+            b[5].write("    (no arithmetic expressions — control/memory ops only)\n")
 
     if total_cse:
-        sink.write(f"\n  Total CSE savings possible: {total_cse} expression(s)\n")
+        b[5].write(f"\n  Total CSE savings possible: {total_cse} expression(s)\n")
 
-    # 5d — Liveness analysis
     live_in, live_out = liveness_analysis(blocks, cfg_nodes)
-    sink.write(f"\nLiveness Analysis:\n")
+    b[5].write(f"\nLiveness Analysis:\n")
     for k in range(len(blocks)):
         li = "{" + ", ".join(sorted(live_in[k]))  + "}" if live_in[k]  else "{}"
         lo = "{" + ", ".join(sorted(live_out[k])) + "}" if live_out[k] else "{}"
-        sink.write(f"  Block {k}: live_in={li:<30} live_out={lo}\n")
+        b[5].write(f"  Block {k}: live_in={li:<30} live_out={lo}\n")
 
-    # 5e — Run all optimization passes
     opt, report = optimize(code)
 
-    sink.write(f"\nOptimization Report ({len(report)} action(s)):\n")
+    b[5].write(f"\nOptimization Report ({len(report)} action(s)):\n")
     if report:
         for line in report:
-            sink.write(f"  {line}\n")
+            b[5].write(f"  {line}\n")
     else:
-        sink.write("  (no optimizations applied)\n")
+        b[5].write("  (no optimizations applied)\n")
 
-    sink.write(f"\nOptimized TAC:\n")
+    b[5].write(f"\nOptimized TAC:\n")
     for i, q in enumerate(opt):
-        sink.write(f"  {i:>3}: {q}\n")
-    sink.write(f"\nInstructions before: {len(code)}, after: {len(opt)}\n")
+        b[5].write(f"  {i:>3}: {q}\n")
+    b[5].write(f"\nInstructions before: {len(code)}, after: {len(opt)}\n")
 
-    if stop_at == 5:
+    if phase_only == 5:
+        emit(5)
         return True
 
     # ── Phase 6: Target Code Generation ──────────────────────────────────────
-    banner("PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)", sink)
+    banner("PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)", b[6])
 
     asm, ad_dump = generate_target(opt, table.symbols)
 
     for line in asm:
         indent = "" if line.startswith("LABEL") else "    "
-        sink.write(indent + line + "\n")
+        b[6].write(indent + line + "\n")
 
-    # Address Descriptor snapshot
     if ad_dump:
-        sink.write("\nAddress Descriptors (final state):\n")
-        sink.write(f"  {'NAME':<14}LOCATIONS\n")
-        sink.write("  " + "-" * 34 + "\n")
+        b[6].write("\nAddress Descriptors (final state):\n")
+        b[6].write(f"  {'NAME':<14}LOCATIONS\n")
+        b[6].write("  " + "-" * 34 + "\n")
         for name, locs in ad_dump.items():
             if name.startswith("_acc"):
-                continue    # skip internal scratch registers
-            sink.write(f"  {name:<14}{{{', '.join(locs)}}}\n")
+                continue
+            b[6].write(f"  {name:<14}{{{', '.join(locs)}}}\n")
 
-    banner("COMPILATION SUCCESSFUL", sink)
+    banner("COMPILATION SUCCESSFUL", b[6])
+
+    emit(6)
     return True
 
 
@@ -296,12 +330,12 @@ def main():
 
     src_path = sys.argv[1]
 
-    stop_at = 6
+    phase_only = None
     if "--phase" in sys.argv:
         idx = sys.argv.index("--phase")
         try:
-            stop_at = int(sys.argv[idx + 1])
-            if stop_at not in range(1, 7):
+            phase_only = int(sys.argv[idx + 1])
+            if phase_only not in range(1, 7):
                 raise ValueError
         except (IndexError, ValueError):
             print("Error: --phase requires a number between 1 and 6")
@@ -314,12 +348,11 @@ def main():
     with open(src_path, "r") as f:
         src = f.read()
 
-    import io
     buf = io.StringIO()
     buf.write(f"SimpleLang Compiler — compiling: {src_path}\n")
-    if stop_at < 6:
-        buf.write(f"(running up to Phase {stop_at} only)\n")
-    ok = compile_source(src, buf, stop_at)
+    if phase_only:
+        buf.write(f"(showing Phase {phase_only} output only)\n")
+    ok = compile_source(src, buf, phase_only)
     result = buf.getvalue()
 
     print(result)
