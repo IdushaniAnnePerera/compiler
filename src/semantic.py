@@ -1,18 +1,32 @@
 """
 Phase 3: Semantic Analyzer
 
-Walks the AST, builds a scoped symbol table, and checks:
+Infrastructure
+--------------
+HashTable   : hand-coded hash table (DJB2 hash, separate chaining).
+              Used as the backing store for every scope in the symbol table.
+
+SymbolEntry : one symbol-table row, carrying:
+              type_str — declared type (e.g. "int", "float", "int[5]")
+              size     — memory footprint in bytes
+                         (int=2, float=4, bool=1, string=8, array=elem*count)
+              offset   — byte offset from the base of the activation record
+                         (assigned sequentially for global-scope variables)
+
+SymbolTable : scoped stack of HashTables.
+              scopes[0] is the global scope; each if/while block pushes a
+              fresh scope that is popped on exit.
+
+Semantic checks
+---------------
   - Scope resolution   : variables declared before use; inner scopes shadow outer
   - No duplicate declarations in the same scope
-  - Type checking      : type compatibility in assignments, arithmetic, relational,
-                         logical, and unary operations; if/while conditions must be bool
-  - Array type safety  : array element type checked on read and write
-  - Array-bound checking: out-of-bounds access reported when the index is a
-                          compile-time integer constant
+  - Type checking      : compatible operands for every operator
+  - Array type safety  : element type checked on read and write
+  - Array-bound check  : out-of-bounds reported for compile-time constant indices
 
-Annotates expression nodes with an inferred .vtype for later phases.
-Array types are stored in the symbol table as the string  "elem_type[size]"
-(e.g. "int[5]") so the display in compiler.py stays format-compatible.
+Annotates every expression node with .vtype for downstream phases.
+Array types are stored in the symbol table as "elem_type[size]" (e.g. "int[5]").
 """
 
 from ast_nodes import (
@@ -26,17 +40,107 @@ class SemanticError(Exception):
     pass
 
 
+# ── Hand-coded Hash Table ─────────────────────────────────────────────────────
+
+class HashTable:
+    """
+    Separate-chaining hash table backed by a fixed-capacity bucket array.
+    Hash function: DJB2  (h = 5381; for each char: h = h*33 XOR ord(ch))
+    Capacity: 64 buckets.  Each bucket is a list of (key, value) pairs.
+    """
+    _CAP = 64
+
+    def __init__(self):
+        self._buckets = [[] for _ in range(self._CAP)]
+        self._len = 0
+
+    def _hash(self, key):
+        h = 5381
+        for ch in str(key):
+            h = ((h << 5) + h) ^ ord(ch)
+            h &= 0xFFFFFFFF              # keep within 32 bits
+        return h % self._CAP
+
+    def __setitem__(self, key, val):
+        h = self._hash(key)
+        for i, (k, _) in enumerate(self._buckets[h]):
+            if k == key:
+                self._buckets[h][i] = (key, val)   # update existing
+                return
+        self._buckets[h].append((key, val))         # insert new
+        self._len += 1
+
+    def __getitem__(self, key):
+        h = self._hash(key)
+        for k, v in self._buckets[h]:
+            if k == key:
+                return v
+        raise KeyError(key)
+
+    def __contains__(self, key):
+        h = self._hash(key)
+        return any(k == key for k, _ in self._buckets[h])
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+    def items(self):
+        """Yield all (key, value) pairs across all buckets."""
+        for bucket in self._buckets:
+            yield from bucket
+
+    def __len__(self):
+        return self._len
+
+
+# ── Symbol Table Entry ────────────────────────────────────────────────────────
+
+_TYPE_BYTES = {"int": 2, "float": 4, "bool": 1, "string": 8}
+
+
+def _compute_size(type_str):
+    """Return the byte size for a type string."""
+    if "[" in type_str:
+        elem  = type_str.split("[")[0]
+        count = int(type_str.split("[")[1].rstrip("]"))
+        return _TYPE_BYTES.get(elem, 2) * count
+    return _TYPE_BYTES.get(type_str, 2)
+
+
+class SymbolEntry:
+    """One row in the symbol table (type + memory layout)."""
+    __slots__ = ("type_str", "size", "offset")
+
+    def __init__(self, type_str, offset):
+        self.type_str = type_str
+        self.size     = _compute_size(type_str)
+        self.offset   = offset
+
+    def __repr__(self):
+        return (f"SymbolEntry(type={self.type_str!r}, "
+                f"size={self.size}B, offset={self.offset})")
+
+
 # ── Symbol Table (scoped) ─────────────────────────────────────────────────────
 
 class SymbolTable:
-    """Stack of dicts; each dict is one lexical scope.
-    scopes[0] is the global (outermost) scope."""
+    """
+    Scoped symbol table backed by HashTable instances.
+
+    scopes[0] is the global scope; push_scope / pop_scope bracket if/while
+    blocks.  Offset tracking is done only for global-scope entries so that the
+    activation-record layout is computed correctly.
+    """
 
     def __init__(self):
-        self.scopes = [{}]
+        self.scopes       = [HashTable()]   # scopes[0] = global scope
+        self._next_offset = 0               # next byte offset (global scope)
 
     def push_scope(self):
-        self.scopes.append({})
+        self.scopes.append(HashTable())
 
     def pop_scope(self):
         if len(self.scopes) > 1:
@@ -44,39 +148,53 @@ class SymbolTable:
 
     @property
     def symbols(self):
-        """Expose the global scope for display (block-scoped vars are popped)."""
+        """Expose the global-scope HashTable (values are SymbolEntry objects)."""
         return self.scopes[0]
 
+    @property
+    def total_size(self):
+        """Total bytes occupied by all global-scope variables."""
+        return self._next_offset
+
     def declare(self, name, type_str, line):
-        """Declare in the innermost (current) scope only."""
+        """Declare name in the innermost (current) scope."""
         if name in self.scopes[-1]:
             raise SemanticError(
                 f"Semantic Error (line {line}): variable '{name}' already declared "
                 f"in this scope"
             )
-        self.scopes[-1][name] = type_str
+        offset = self._next_offset if len(self.scopes) == 1 else 0
+        entry = SymbolEntry(type_str, offset)
+        self.scopes[-1][name] = entry
+        if len(self.scopes) == 1:
+            self._next_offset += entry.size
 
     def lookup(self, name, line):
-        """Search from innermost to outermost scope."""
+        """Return the type_str of name (searches from innermost scope out)."""
         for scope in reversed(self.scopes):
             if name in scope:
-                return scope[name]
+                return scope[name].type_str
         raise SemanticError(
             f"Semantic Error (line {line}): variable '{name}' used before declaration"
         )
 
+    def lookup_entry(self, name):
+        """Return the full SymbolEntry, or None if not found."""
+        for scope in reversed(self.scopes):
+            if name in scope:
+                return scope[name]
+        return None
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+
+# ── Type helpers ──────────────────────────────────────────────────────────────
 
 def _is_array_type(t):
     return isinstance(t, str) and "[" in t
 
 def _elem_type(arr_type_str):
-    """Extract element type from "int[5]" -> "int"."""
     return arr_type_str.split("[")[0]
 
 def _array_size(arr_type_str):
-    """Extract declared size from "int[5]" -> 5."""
     try:
         return int(arr_type_str.split("[")[1].rstrip("]"))
     except (IndexError, ValueError):
@@ -87,7 +205,7 @@ def _array_size(arr_type_str):
 
 class SemanticAnalyzer:
     def __init__(self):
-        self.table = SymbolTable()
+        self.table  = SymbolTable()
         self.errors = []
 
     def analyze(self, program):
@@ -141,7 +259,6 @@ class SemanticAnalyzer:
                             f"Semantic Error (line {node.line}): array index must "
                             f"be int, got {idx_t}"
                         )
-                    # Compile-time bounds check
                     if isinstance(node.index, Num) and size is not None:
                         idx_val = int(node.index.value)
                         if not (0 <= idx_val < size):
@@ -205,7 +322,7 @@ class SemanticAnalyzer:
             return
         if target == value:
             return
-        if target == "float" and value == "int":   # int -> float widening
+        if target == "float" and value == "int":
             return
         self.errors.append(
             f"Semantic Error (line {line}): cannot assign {value} to "
@@ -251,7 +368,6 @@ class SemanticAnalyzer:
                         f"Semantic Error (line {node.line}): array index must be "
                         f"int, got {idx_t}"
                     )
-                # Compile-time bounds check
                 if isinstance(node.index, Num) and size is not None:
                     idx_val = int(node.index.value)
                     if not (0 <= idx_val < size):
