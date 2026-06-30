@@ -1,0 +1,1079 @@
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\myprog.sl
+(running up to Phase 5 only)
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
+================================================================
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   5     1
+ID          base                  5     6
+OP          =                     5     13
+NUMBER      6                     5     15
+DELIM       ;                     5     16
+KEYWORD     int                   6     1
+ID          height                6     6
+OP          =                     6     13
+NUMBER      9                     6     15
+DELIM       ;                     6     16
+KEYWORD     float                 7     1
+ID          area                  7     7
+DELIM       ;                     7     11
+KEYWORD     bool                  8     1
+ID          is_big                8     6
+DELIM       ;                     8     12
+KEYWORD     int                   11    1
+ID          perimeter             11    6
+OP          =                     11    16
+NUMBER      2                     11    18
+OP          *                     11    20
+ID          base                  11    22
+OP          +                     11    27
+NUMBER      2                     11    29
+OP          *                     11    31
+ID          height                11    33
+DELIM       ;                     11    39
+KEYWORD     int                   12    1
+ID          diff                  12    6
+OP          =                     12    16
+ID          height                12    18
+OP          -                     12    25
+ID          base                  12    27
+DELIM       ;                     12    31
+KEYWORD     int                   13    1
+ID          product               13    6
+OP          =                     13    16
+ID          base                  13    18
+OP          *                     13    23
+ID          height                13    25
+DELIM       ;                     13    31
+KEYWORD     int                   14    1
+ID          quotient              14    6
+OP          =                     14    16
+ID          product               14    18
+OP          /                     14    26
+ID          base                  14    28
+DELIM       ;                     14    32
+ID          area                  17    1
+OP          =                     17    6
+ID          product               17    8
+DELIM       ;                     17    15
+KEYWORD     bool                  20    1
+ID          lt                    20    6
+OP          =                     20    9
+ID          base                  20    11
+OP          <                     20    16
+ID          height                20    19
+DELIM       ;                     20    25
+KEYWORD     bool                  21    1
+ID          gt                    21    6
+OP          =                     21    9
+ID          height                21    11
+OP          >                     21    18
+ID          base                  21    21
+DELIM       ;                     21    25
+KEYWORD     bool                  22    1
+ID          le                    22    6
+OP          =                     22    9
+ID          base                  22    11
+OP          <=                    22    16
+NUMBER      6                     22    19
+DELIM       ;                     22    20
+KEYWORD     bool                  23    1
+ID          ge                    23    6
+OP          =                     23    9
+ID          height                23    11
+OP          >=                    23    18
+NUMBER      9                     23    21
+DELIM       ;                     23    22
+KEYWORD     bool                  24    1
+ID          eq                    24    6
+OP          =                     24    9
+ID          quotient              24    11
+OP          ==                    24    20
+ID          height                24    23
+DELIM       ;                     24    29
+KEYWORD     bool                  25    1
+ID          ne                    25    6
+OP          =                     25    9
+ID          base                  25    11
+OP          !=                    25    16
+ID          height                25    19
+DELIM       ;                     25    25
+ID          is_big                28    1
+OP          =                     28    10
+ID          gt                    28    12
+OP          &&                    28    15
+ID          ge                    28    18
+DELIM       ;                     28    20
+KEYWORD     bool                  29    1
+ID          either                29    6
+OP          =                     29    14
+ID          lt                    29    16
+OP          ||                    29    19
+ID          ne                    29    22
+DELIM       ;                     29    24
+KEYWORD     bool                  30    1
+ID          neither               30    6
+OP          =                     30    14
+OP          !                     30    16
+ID          is_big                30    17
+DELIM       ;                     30    23
+KEYWORD     int                   33    1
+ID          neg_diff              33    5
+OP          =                     33    14
+OP          -                     33    16
+ID          diff                  33    17
+DELIM       ;                     33    21
+KEYWORD     if                    36    1
+DELIM       (                     36    4
+ID          is_big                36    5
+DELIM       )                     36    11
+KEYWORD     begin                 36    13
+KEYWORD     print                 37    5
+DELIM       (                     37    10
+STRING      shape is large        37    11
+DELIM       )                     37    27
+DELIM       ;                     37    28
+KEYWORD     end                   38    1
+KEYWORD     else                  38    5
+KEYWORD     begin                 38    10
+KEYWORD     print                 39    5
+DELIM       (                     39    10
+STRING      shape is small        39    11
+DELIM       )                     39    27
+DELIM       ;                     39    28
+KEYWORD     end                   40    1
+KEYWORD     if                    43    1
+DELIM       (                     43    4
+ID          eq                    43    5
+DELIM       )                     43    7
+KEYWORD     begin                 43    9
+KEYWORD     print                 44    5
+DELIM       (                     44    10
+STRING      quotient equals height44    11
+DELIM       )                     44    35
+DELIM       ;                     44    36
+KEYWORD     end                   45    1
+KEYWORD     int                   48    1
+ID          i                     48    5
+OP          =                     48    9
+NUMBER      1                     48    11
+DELIM       ;                     48    12
+KEYWORD     int                   49    1
+ID          acc                   49    5
+OP          =                     49    9
+NUMBER      0                     49    11
+DELIM       ;                     49    12
+KEYWORD     while                 50    1
+DELIM       (                     50    7
+ID          i                     50    8
+OP          <=                    50    10
+ID          base                  50    13
+DELIM       )                     50    17
+KEYWORD     begin                 50    19
+ID          acc                   51    5
+OP          =                     51    9
+ID          acc                   51    11
+OP          +                     51    15
+ID          i                     51    17
+DELIM       ;                     51    18
+ID          i                     52    5
+OP          =                     52    9
+ID          i                     52    11
+OP          +                     52    13
+NUMBER      1                     52    15
+DELIM       ;                     52    16
+KEYWORD     end                   53    1
+KEYWORD     int                   57    1
+ID          limit                 57    5
+OP          =                     57    11
+NUMBER      100                   57    13
+DELIM       ;                     57    16
+KEYWORD     if                    58    1
+DELIM       (                     58    4
+ID          acc                   58    5
+OP          <                     58    9
+ID          limit                 58    11
+DELIM       )                     58    16
+KEYWORD     begin                 58    18
+KEYWORD     int                   59    5
+ID          limit                 59    9
+OP          =                     59    15
+NUMBER      21                    59    17
+DELIM       ;                     59    19
+KEYWORD     print                 60    5
+DELIM       (                     60    10
+ID          limit                 60    11
+DELIM       )                     60    16
+DELIM       ;                     60    17
+KEYWORD     end                   61    1
+KEYWORD     print                 62    1
+DELIM       (                     62    6
+ID          limit                 62    7
+DELIM       )                     62    12
+DELIM       ;                     62    13
+KEYWORD     int                   65    1
+ID          scores                65    5
+DELIM       [                     65    11
+NUMBER      5                     65    12
+DELIM       ]                     65    13
+DELIM       ;                     65    14
+ID          scores                66    1
+DELIM       [                     66    7
+NUMBER      0                     66    8
+DELIM       ]                     66    9
+OP          =                     66    11
+NUMBER      80                    66    13
+DELIM       ;                     66    15
+ID          scores                67    1
+DELIM       [                     67    7
+NUMBER      1                     67    8
+DELIM       ]                     67    9
+OP          =                     67    11
+NUMBER      65                    67    13
+DELIM       ;                     67    15
+ID          scores                68    1
+DELIM       [                     68    7
+NUMBER      2                     68    8
+DELIM       ]                     68    9
+OP          =                     68    11
+NUMBER      90                    68    13
+DELIM       ;                     68    15
+ID          scores                69    1
+DELIM       [                     69    7
+NUMBER      3                     69    8
+DELIM       ]                     69    9
+OP          =                     69    11
+NUMBER      72                    69    13
+DELIM       ;                     69    15
+ID          scores                70    1
+DELIM       [                     70    7
+NUMBER      4                     70    8
+DELIM       ]                     70    9
+OP          =                     70    11
+NUMBER      85                    70    13
+DELIM       ;                     70    15
+KEYWORD     int                   72    1
+ID          idx                   72    5
+OP          =                     72    11
+NUMBER      0                     72    13
+DELIM       ;                     72    14
+KEYWORD     int                   73    1
+ID          total                 73    5
+OP          =                     73    11
+NUMBER      0                     73    13
+DELIM       ;                     73    14
+KEYWORD     while                 74    1
+DELIM       (                     74    7
+ID          idx                   74    8
+OP          <                     74    12
+NUMBER      5                     74    14
+DELIM       )                     74    15
+KEYWORD     begin                 74    17
+ID          total                 75    5
+OP          =                     75    11
+ID          total                 75    13
+OP          +                     75    19
+ID          scores                75    21
+DELIM       [                     75    27
+ID          idx                   75    28
+DELIM       ]                     75    31
+DELIM       ;                     75    32
+ID          idx                   76    5
+OP          =                     76    11
+ID          idx                   76    13
+OP          +                     76    17
+NUMBER      1                     76    19
+DELIM       ;                     76    20
+KEYWORD     end                   77    1
+KEYWORD     int                   81    1
+ID          dbl                   81    5
+OP          =                     81    10
+ID          base                  81    12
+OP          *                     81    17
+NUMBER      2                     81    19
+DELIM       ;                     81    20
+KEYWORD     int                   82    1
+ID          quad                  82    5
+OP          =                     82    10
+ID          base                  82    12
+OP          *                     82    17
+NUMBER      4                     82    19
+DELIM       ;                     82    20
+KEYWORD     int                   83    1
+ID          oct                   83    5
+OP          =                     83    10
+ID          base                  83    12
+OP          *                     83    17
+NUMBER      8                     83    19
+DELIM       ;                     83    20
+KEYWORD     int                   86    1
+ID          p                     86    5
+OP          =                     86    7
+ID          base                  86    9
+OP          +                     86    14
+ID          height                86    16
+DELIM       ;                     86    22
+KEYWORD     int                   87    1
+ID          q                     87    5
+OP          =                     87    7
+ID          base                  87    9
+OP          +                     87    14
+ID          height                87    16
+DELIM       ;                     87    22
+KEYWORD     print                 90    1
+DELIM       (                     90    6
+ID          perimeter             90    7
+DELIM       )                     90    16
+DELIM       ;                     90    17
+KEYWORD     print                 91    1
+DELIM       (                     91    6
+ID          area                  91    7
+DELIM       )                     91    11
+DELIM       ;                     91    12
+KEYWORD     print                 92    1
+DELIM       (                     92    6
+ID          product               92    7
+DELIM       )                     92    14
+DELIM       ;                     92    15
+KEYWORD     print                 93    1
+DELIM       (                     93    6
+ID          quotient              93    7
+DELIM       )                     93    15
+DELIM       ;                     93    16
+KEYWORD     print                 94    1
+DELIM       (                     94    6
+ID          diff                  94    7
+DELIM       )                     94    11
+DELIM       ;                     94    12
+KEYWORD     print                 95    1
+DELIM       (                     95    6
+ID          neg_diff              95    7
+DELIM       )                     95    15
+DELIM       ;                     95    16
+KEYWORD     print                 96    1
+DELIM       (                     96    6
+ID          acc                   96    7
+DELIM       )                     96    10
+DELIM       ;                     96    11
+KEYWORD     print                 97    1
+DELIM       (                     97    6
+ID          total                 97    7
+DELIM       )                     97    12
+DELIM       ;                     97    13
+KEYWORD     print                 98    1
+DELIM       (                     98    6
+ID          dbl                   98    7
+DELIM       )                     98    10
+DELIM       ;                     98    11
+KEYWORD     print                 99    1
+DELIM       (                     99    6
+ID          quad                  99    7
+DELIM       )                     99    11
+DELIM       ;                     99    12
+KEYWORD     print                 100   1
+DELIM       (                     100   6
+ID          oct                   100   7
+DELIM       )                     100   10
+DELIM       ;                     100   11
+KEYWORD     print                 101   1
+DELIM       (                     101   6
+ID          p                     101   7
+DELIM       )                     101   8
+DELIM       ;                     101   9
+KEYWORD     print                 102   1
+DELIM       (                     102   6
+ID          is_big                102   7
+DELIM       )                     102   13
+DELIM       ;                     102   14
+KEYWORD     print                 103   1
+DELIM       (                     103   6
+ID          neither               103   7
+DELIM       )                     103   14
+DELIM       ;                     103   15
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int base
+      Num 6
+    VarDecl int height
+      Num 9
+    VarDecl float area
+    VarDecl bool is_big
+    VarDecl int perimeter
+      BinOp '+'
+        BinOp '*'
+          Num 2
+          Var base
+        BinOp '*'
+          Num 2
+          Var height
+    VarDecl int diff
+      BinOp '-'
+        Var height
+        Var base
+    VarDecl int product
+      BinOp '*'
+        Var base
+        Var height
+    VarDecl int quotient
+      BinOp '/'
+        Var product
+        Var base
+    Assign area
+      Var product
+    VarDecl bool lt
+      BinOp '<'
+        Var base
+        Var height
+    VarDecl bool gt
+      BinOp '>'
+        Var height
+        Var base
+    VarDecl bool le
+      BinOp '<='
+        Var base
+        Num 6
+    VarDecl bool ge
+      BinOp '>='
+        Var height
+        Num 9
+    VarDecl bool eq
+      BinOp '=='
+        Var quotient
+        Var height
+    VarDecl bool ne
+      BinOp '!='
+        Var base
+        Var height
+    Assign is_big
+      BinOp '&&'
+        Var gt
+        Var ge
+    VarDecl bool either
+      BinOp '||'
+        Var lt
+        Var ne
+    VarDecl bool neither
+      UnaryOp '!'
+        Var is_big
+    VarDecl int neg_diff
+      UnaryOp '-'
+        Var diff
+    If
+      cond:
+        Var is_big
+      then:
+        Print
+          Str "shape is large"
+      else:
+        Print
+          Str "shape is small"
+    If
+      cond:
+        Var eq
+      then:
+        Print
+          Str "quotient equals height"
+    VarDecl int i
+      Num 1
+    VarDecl int acc
+      Num 0
+    While
+      cond:
+        BinOp '<='
+          Var i
+          Var base
+      body:
+        Assign acc
+          BinOp '+'
+            Var acc
+            Var i
+        Assign i
+          BinOp '+'
+            Var i
+            Num 1
+    VarDecl int limit
+      Num 100
+    If
+      cond:
+        BinOp '<'
+          Var acc
+          Var limit
+      then:
+        VarDecl int limit
+          Num 21
+        Print
+          Var limit
+    Print
+      Var limit
+    ArrayDecl int scores[5]
+    ArrayAssign scores[
+      Num 0
+    ] =
+      Num 80
+    ArrayAssign scores[
+      Num 1
+    ] =
+      Num 65
+    ArrayAssign scores[
+      Num 2
+    ] =
+      Num 90
+    ArrayAssign scores[
+      Num 3
+    ] =
+      Num 72
+    ArrayAssign scores[
+      Num 4
+    ] =
+      Num 85
+    VarDecl int idx
+      Num 0
+    VarDecl int total
+      Num 0
+    While
+      cond:
+        BinOp '<'
+          Var idx
+          Num 5
+      body:
+        Assign total
+          BinOp '+'
+            Var total
+            ArrayAccess scores[
+              Var idx
+            ]
+        Assign idx
+          BinOp '+'
+            Var idx
+            Num 1
+    VarDecl int dbl
+      BinOp '*'
+        Var base
+        Num 2
+    VarDecl int quad
+      BinOp '*'
+        Var base
+        Num 4
+    VarDecl int oct
+      BinOp '*'
+        Var base
+        Num 8
+    VarDecl int p
+      BinOp '+'
+        Var base
+        Var height
+    VarDecl int q
+      BinOp '+'
+        Var base
+        Var height
+    Print
+      Var perimeter
+    Print
+      Var area
+    Print
+      Var product
+    Print
+      Var quotient
+    Print
+      Var diff
+    Print
+      Var neg_diff
+    Print
+      Var acc
+    Print
+      Var total
+    Print
+      Var dbl
+    Print
+      Var quad
+    Print
+      Var oct
+    Print
+      Var p
+    Print
+      Var is_big
+    Print
+      Var neither
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
+================================================================
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  perimeter     int           2         9
+  either        bool          1         23
+  quad          int           2         49
+  total         int           2         45
+  diff          int           2         11
+  is_big        bool          1         8
+  le            bool          1         19
+  neither       bool          1         24
+  i             int           2         27
+  ne            bool          1         22
+  dbl           int           2         47
+  limit         int           2         31
+  idx           int           2         43
+  area          float         4         4
+  q             int           2         55
+  p             int           2         53
+  neg_diff      int           2         25
+  lt            bool          1         17
+  acc           int           2         29
+  ge            bool          1         20
+  quotient      int           2         15
+  product       int           2         13
+  base          int           2         0
+  eq            bool          1         21
+  gt            bool          1         18
+  height        int           2         2
+  oct           int           2         51
+  scores        int[5]        10        33
+
+  Total activation-record size: 57 bytes
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)
+================================================================
+    0: base = 6
+    1: height = 9
+    2: t1 = 2 * base
+    3: t2 = 2 * height
+    4: t3 = t1 + t2
+    5: perimeter = t3
+    6: t4 = height - base
+    7: diff = t4
+    8: t5 = base * height
+    9: product = t5
+   10: t6 = product / base
+   11: quotient = t6
+   12: area = product
+   13: t7 = base < height
+   14: lt = t7
+   15: t8 = height > base
+   16: gt = t8
+   17: t9 = base <= 6
+   18: le = t9
+   19: t10 = height >= 9
+   20: ge = t10
+   21: t11 = quotient == height
+   22: eq = t11
+   23: t12 = base != height
+   24: ne = t12
+   25: t13 = gt && ge
+   26: is_big = t13
+   27: t14 = lt || ne
+   28: either = t14
+   29: t15 = !is_big
+   30: neither = t15
+   31: t16 = -diff
+   32: neg_diff = t16
+   33: ifFalse is_big goto L1
+   34: print "shape is large"
+   35: goto L2
+   36: L1:
+   37: print "shape is small"
+   38: L2:
+   39: ifFalse eq goto L3
+   40: print "quotient equals height"
+   41: L3:
+   42: i = 1
+   43: acc = 0
+   44: L4:
+   45: t17 = i <= base
+   46: ifFalse t17 goto L5
+   47: t18 = acc + i
+   48: acc = t18
+   49: t19 = i + 1
+   50: i = t19
+   51: goto L4
+   52: L5:
+   53: limit = 100
+   54: t20 = acc < limit
+   55: ifFalse t20 goto L6
+   56: limit = 21
+   57: print limit
+   58: L6:
+   59: print limit
+   60: alloc_arr scores[5]
+   61: scores[0] = 80
+   62: scores[1] = 65
+   63: scores[2] = 90
+   64: scores[3] = 72
+   65: scores[4] = 85
+   66: idx = 0
+   67: total = 0
+   68: L7:
+   69: t21 = idx < 5
+   70: ifFalse t21 goto L8
+   71: t22 = scores[idx]
+   72: t23 = total + t22
+   73: total = t23
+   74: t24 = idx + 1
+   75: idx = t24
+   76: goto L7
+   77: L8:
+   78: t25 = base * 2
+   79: dbl = t25
+   80: t26 = base * 4
+   81: quad = t26
+   82: t27 = base * 8
+   83: oct = t27
+   84: t28 = base + height
+   85: p = t28
+   86: t29 = base + height
+   87: q = t29
+   88: print perimeter
+   89: print area
+   90: print product
+   91: print quotient
+   92: print diff
+   93: print neg_diff
+   94: print acc
+   95: print total
+   96: print dbl
+   97: print quad
+   98: print oct
+   99: print p
+  100: print is_big
+  101: print neither
+
+================================================================
+PHASE 5: OPTIMIZATION  (Lecture 9)
+================================================================
+
+Basic Blocks (14 total):
+  Block 0:
+    base = 6
+    height = 9
+    t1 = 2 * base
+    t2 = 2 * height
+    t3 = t1 + t2
+    perimeter = t3
+    t4 = height - base
+    diff = t4
+    t5 = base * height
+    product = t5
+    t6 = product / base
+    quotient = t6
+    area = product
+    t7 = base < height
+    lt = t7
+    t8 = height > base
+    gt = t8
+    t9 = base <= 6
+    le = t9
+    t10 = height >= 9
+    ge = t10
+    t11 = quotient == height
+    eq = t11
+    t12 = base != height
+    ne = t12
+    t13 = gt && ge
+    is_big = t13
+    t14 = lt || ne
+    either = t14
+    t15 = !is_big
+    neither = t15
+    t16 = -diff
+    neg_diff = t16
+    ifFalse is_big goto L1
+  Block 1:
+    print "shape is large"
+    goto L2
+  Block 2:
+    L1:
+    print "shape is small"
+  Block 3:
+    L2:
+    ifFalse eq goto L3
+  Block 4:
+    print "quotient equals height"
+  Block 5:
+    L3:
+    i = 1
+    acc = 0
+  Block 6:
+    L4:
+    t17 = i <= base
+    ifFalse t17 goto L5
+  Block 7:
+    t18 = acc + i
+    acc = t18
+    t19 = i + 1
+    i = t19
+    goto L4
+  Block 8:
+    L5:
+    limit = 100
+    t20 = acc < limit
+    ifFalse t20 goto L6
+  Block 9:
+    limit = 21
+    print limit
+  Block 10:
+    L6:
+    print limit
+    alloc_arr scores[5]
+    scores[0] = 80
+    scores[1] = 65
+    scores[2] = 90
+    scores[3] = 72
+    scores[4] = 85
+    idx = 0
+    total = 0
+  Block 11:
+    L7:
+    t21 = idx < 5
+    ifFalse t21 goto L8
+  Block 12:
+    t22 = scores[idx]
+    t23 = total + t22
+    total = t23
+    t24 = idx + 1
+    idx = t24
+    goto L7
+  Block 13:
+    L8:
+    t25 = base * 2
+    dbl = t25
+    t26 = base * 4
+    quad = t26
+    t27 = base * 8
+    oct = t27
+    t28 = base + height
+    p = t28
+    t29 = base + height
+    q = t29
+    print perimeter
+    print area
+    print product
+    print quotient
+    print diff
+    print neg_diff
+    print acc
+    print total
+    print dbl
+    print quad
+    print oct
+    print p
+    print is_big
+    print neither
+
+Control Flow Graph (14 nodes):
+  Block 0              pred=entry           succ=[1, 2]
+  Block 1              pred=[0]             succ=[3]
+  Block 2  [L1]        pred=[0]             succ=[3]
+  Block 3  [L2]        pred=[1, 2]          succ=[4, 5]
+  Block 4              pred=[3]             succ=[5]
+  Block 5  [L3]        pred=[3, 4]          succ=[6]
+  Block 6  [L4]        pred=[5, 7]          succ=[7, 8]
+  Block 7              pred=[6]             succ=[6]
+  Block 8  [L5]        pred=[6]             succ=[9, 10]
+  Block 9              pred=[8]             succ=[10]
+  Block 10  [L6]        pred=[8, 9]          succ=[11]
+  Block 11  [L7]        pred=[10, 12]        succ=[12, 13]
+  Block 12              pred=[11]            succ=[11]
+  Block 13  [L8]        pred=[11]            succ=exit
+
+DAG Analysis per Basic Block:
+  Block 0 (34 quad(s)):
+    Leaf nodes : 6, 9, 2, t15, t16
+    #4[t1] = 2 * 6
+    #5[t2] = 2 * 9
+    #6[t3,perimeter] = #4 + #5
+    #7[t4,diff] = 9 - 6
+    #8[t5,product,area] = 6 * 9
+    #9[t6,quotient] = #8 / 6
+    #10[t7,lt] = 6 < 9
+    #11[t8,gt] = 9 > 6
+    #12[t9,le] = 6 <= 6
+    #13[t10,ge] = 9 >= 9
+    #14[t11,eq] = #9 == 9
+    #15[t12,ne] = 6 != 9
+    #16[t13,is_big] = #11 && #13
+    #17[t14,either] = #10 || #15
+  Block 1 (2 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 2 (2 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 3 (2 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 4 (1 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 5 (3 quad(s)):
+    Leaf nodes : 1, 0
+  Block 6 (3 quad(s)):
+    Leaf nodes : i, base
+    #3[t17] = i <= base
+  Block 7 (5 quad(s)):
+    Leaf nodes : acc, i, 1
+    #3[t18,acc] = acc + i
+    #5[t19,i] = i + 1
+  Block 8 (4 quad(s)):
+    Leaf nodes : 100, acc
+    #3[t20] = acc < 100
+  Block 9 (2 quad(s)):
+    Leaf nodes : 21
+  Block 10 (10 quad(s)):
+    Leaf nodes : 0
+  Block 11 (3 quad(s)):
+    Leaf nodes : idx, 5
+    #3[t21] = idx < 5
+  Block 12 (6 quad(s)):
+    Leaf nodes : total, t22, idx, 1
+    #3[t23,total] = total + t22
+    #6[t24,idx] = idx + 1
+  Block 13 (25 quad(s)):
+    Leaf nodes : base, 2, 4, 8, height
+    #3[t25,dbl] = base * 2
+    #5[t26,quad] = base * 4
+    #7[t27,oct] = base * 8
+    #9[t28,p,t29,q] = base + height
+    *** 1 common subexpression(s) detected ***
+
+  Total CSE savings possible: 1 expression(s)
+
+Liveness Analysis:
+  Block 0: live_in={}                             live_out={area, base, diff, eq, height, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 1: live_in={area, base, diff, eq, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={area, base, diff, eq, height, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 2: live_in={area, base, diff, eq, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={area, base, diff, eq, height, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 3: live_in={area, base, diff, eq, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 4: live_in={area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 5: live_in={area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={acc, area, base, diff, height, i, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 6: live_in={acc, area, base, diff, height, i, is_big, neg_diff, neither, perimeter, product, quotient} live_out={acc, area, base, diff, height, i, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 7: live_in={acc, area, base, diff, height, i, is_big, neg_diff, neither, perimeter, product, quotient} live_out={acc, area, base, diff, height, i, is_big, neg_diff, neither, perimeter, product, quotient}
+  Block 8: live_in={acc, area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={acc, area, base, diff, height, is_big, limit, neg_diff, neither, perimeter, product, quotient}
+  Block 9: live_in={acc, area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient} live_out={acc, area, base, diff, height, is_big, limit, neg_diff, neither, perimeter, product, quotient}
+  Block 10: live_in={acc, area, base, diff, height, is_big, limit, neg_diff, neither, perimeter, product, quotient} live_out={acc, area, base, diff, height, idx, is_big, neg_diff, neither, perimeter, product, quotient, scores, total}
+  Block 11: live_in={acc, area, base, diff, height, idx, is_big, neg_diff, neither, perimeter, product, quotient, scores, total} live_out={acc, area, base, diff, height, idx, is_big, neg_diff, neither, perimeter, product, quotient, scores, total}
+  Block 12: live_in={acc, area, base, diff, height, idx, is_big, neg_diff, neither, perimeter, product, quotient, scores, total} live_out={acc, area, base, diff, height, idx, is_big, neg_diff, neither, perimeter, product, quotient, scores, total}
+  Block 13: live_in={acc, area, base, diff, height, is_big, neg_diff, neither, perimeter, product, quotient, total} live_out={}
+
+Optimization Report (27 action(s)):
+  [Constant Folding] t1 = 2 * 6 => t1 = 12
+  [Constant Folding] t2 = 2 * 9 => t2 = 18
+  [Constant Folding] t3 = 12 + 18 => t3 = 30
+  [Constant Folding] t4 = 9 - 6 => t4 = 3
+  [Constant Folding] t5 = 6 * 9 => t5 = 54
+  [Constant Folding] t6 = 54 / 6 => t6 = 9.0
+  [Strength Reduction] replaced t25 = base * 2 with t25 = base << 1
+  [Strength Reduction] replaced t26 = base * 4 with t26 = base << 2
+  [Strength Reduction] replaced t27 = base * 8 with t27 = base << 3
+  [Induction Variable] 'i' incremented by +1 each iteration of loop L4
+  [Induction Variable] 'idx' incremented by +1 each iteration of loop L7
+  [Dead Code Elimination] removed unused: t1 = 12
+  [Dead Code Elimination] removed unused: t2 = 18
+  [Dead Code Elimination] removed unused: t3 = 30
+  [Dead Code Elimination] removed unused: t4 = 3
+  [Dead Code Elimination] removed unused: t5 = 54
+  [Dead Code Elimination] removed unused: t6 = 9.0
+  [Dead Code Elimination] removed unused: le = t9
+  [Dead Code Elimination] removed unused: either = t14
+  [Dead Code Elimination] removed unused: q = t29
+  [Dead Code Elimination] removed unused: t9 = 6 <= 6
+  [Dead Code Elimination] removed unused: t14 = lt || ne
+  [Dead Code Elimination] removed unused: t29 = base + height
+  [Dead Code Elimination] removed unused: lt = t7
+  [Dead Code Elimination] removed unused: ne = t12
+  [Dead Code Elimination] removed unused: t7 = 6 < 9
+  [Dead Code Elimination] removed unused: t12 = 6 != 9
+
+Optimized TAC:
+    0: base = 6
+    1: height = 9
+    2: perimeter = 30
+    3: diff = 3
+    4: product = 54
+    5: quotient = 9.0
+    6: area = 54
+    7: t8 = 9 > 6
+    8: gt = t8
+    9: t10 = 9 >= 9
+   10: ge = t10
+   11: t11 = 9.0 == 9
+   12: eq = t11
+   13: t13 = gt && ge
+   14: is_big = t13
+   15: t15 = !is_big
+   16: neither = t15
+   17: t16 = -3
+   18: neg_diff = t16
+   19: ifFalse is_big goto L1
+   20: print "shape is large"
+   21: goto L2
+   22: L1:
+   23: print "shape is small"
+   24: L2:
+   25: ifFalse eq goto L3
+   26: print "quotient equals height"
+   27: L3:
+   28: i = 1
+   29: acc = 0
+   30: L4:
+   31: t17 = i <= base
+   32: ifFalse t17 goto L5
+   33: t18 = acc + i
+   34: acc = t18
+   35: t19 = i + 1
+   36: i = t19
+   37: goto L4
+   38: L5:
+   39: limit = 100
+   40: t20 = acc < 100
+   41: ifFalse t20 goto L6
+   42: limit = 21
+   43: print 21
+   44: L6:
+   45: print limit
+   46: alloc_arr scores[5]
+   47: scores[0] = 80
+   48: scores[1] = 65
+   49: scores[2] = 90
+   50: scores[3] = 72
+   51: scores[4] = 85
+   52: idx = 0
+   53: total = 0
+   54: L7:
+   55: t21 = idx < 5
+   56: ifFalse t21 goto L8
+   57: t22 = scores[idx]
+   58: t23 = total + t22
+   59: total = t23
+   60: t24 = idx + 1
+   61: idx = t24
+   62: goto L7
+   63: L8:
+   64: t25 = base << 1
+   65: dbl = t25
+   66: t26 = base << 2
+   67: quad = t26
+   68: t27 = base << 3
+   69: oct = t27
+   70: t28 = base + height
+   71: p = t28
+   72: print perimeter
+   73: print area
+   74: print product
+   75: print quotient
+   76: print diff
+   77: print neg_diff
+   78: print acc
+   79: print total
+   80: print dbl
+   81: print quad
+   82: print oct
+   83: print p
+   84: print is_big
+   85: print neither
+
+Instructions before: 102, after: 86
+
