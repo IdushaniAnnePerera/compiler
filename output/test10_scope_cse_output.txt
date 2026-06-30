@@ -1,0 +1,316 @@
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test10_scope_cse.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
+================================================================
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   12    1
+ID          x                     12    5
+OP          =                     12    7
+NUMBER      10                    12    9
+DELIM       ;                     12    11
+KEYWORD     if                    13    1
+DELIM       (                     13    4
+ID          x                     13    5
+OP          <                     13    7
+NUMBER      20                    13    9
+DELIM       )                     13    11
+KEYWORD     begin                 13    13
+KEYWORD     int                   14    5
+ID          x                     14    9
+OP          =                     14    11
+NUMBER      99                    14    13
+DELIM       ;                     14    15
+KEYWORD     print                 15    5
+DELIM       (                     15    10
+ID          x                     15    11
+DELIM       )                     15    12
+DELIM       ;                     15    13
+KEYWORD     end                   16    1
+KEYWORD     print                 17    1
+DELIM       (                     17    6
+ID          x                     17    7
+DELIM       )                     17    8
+DELIM       ;                     17    9
+KEYWORD     int                   24    1
+ID          a                     24    5
+OP          =                     24    7
+NUMBER      4                     24    9
+DELIM       ;                     24    10
+KEYWORD     int                   25    1
+ID          b                     25    5
+OP          =                     25    7
+NUMBER      7                     25    9
+DELIM       ;                     25    10
+KEYWORD     int                   26    1
+ID          p                     26    5
+OP          =                     26    7
+ID          a                     26    9
+OP          +                     26    11
+ID          b                     26    13
+DELIM       ;                     26    14
+KEYWORD     int                   27    1
+ID          q                     27    5
+OP          =                     27    7
+ID          a                     27    9
+OP          +                     27    11
+ID          b                     27    13
+DELIM       ;                     27    14
+KEYWORD     print                 29    1
+DELIM       (                     29    6
+ID          p                     29    7
+DELIM       )                     29    8
+DELIM       ;                     29    9
+KEYWORD     print                 30    1
+DELIM       (                     30    6
+ID          q                     30    7
+DELIM       )                     30    8
+DELIM       ;                     30    9
+KEYWORD     int                   33    1
+ID          s4                    33    5
+OP          =                     33    8
+ID          a                     33    10
+OP          *                     33    12
+NUMBER      4                     33    14
+DELIM       ;                     33    15
+KEYWORD     int                   34    1
+ID          s8                    34    5
+OP          =                     34    8
+ID          a                     34    10
+OP          *                     34    12
+NUMBER      8                     34    14
+DELIM       ;                     34    15
+KEYWORD     print                 36    1
+DELIM       (                     36    6
+ID          s4                    36    7
+DELIM       )                     36    9
+DELIM       ;                     36    10
+KEYWORD     print                 37    1
+DELIM       (                     37    6
+ID          s8                    37    7
+DELIM       )                     37    9
+DELIM       ;                     37    10
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int x
+      Num 10
+    If
+      cond:
+        BinOp '<'
+          Var x
+          Num 20
+      then:
+        VarDecl int x
+          Num 99
+        Print
+          Var x
+    Print
+      Var x
+    VarDecl int a
+      Num 4
+    VarDecl int b
+      Num 7
+    VarDecl int p
+      BinOp '+'
+        Var a
+        Var b
+    VarDecl int q
+      BinOp '+'
+        Var a
+        Var b
+    Print
+      Var p
+    Print
+      Var q
+    VarDecl int s4
+      BinOp '*'
+        Var a
+        Num 4
+    VarDecl int s8
+      BinOp '*'
+        Var a
+        Num 8
+    Print
+      Var s4
+    Print
+      Var s8
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
+================================================================
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  a             int           2         2
+  b             int           2         4
+  q             int           2         8
+  p             int           2         6
+  x             int           2         0
+  s4            int           2         10
+  s8            int           2         12
+
+  Total activation-record size: 14 bytes
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)
+================================================================
+    0: x = 10
+    1: t1 = x < 20
+    2: ifFalse t1 goto L1
+    3: x = 99
+    4: print x
+    5: L1:
+    6: print x
+    7: a = 4
+    8: b = 7
+    9: t2 = a + b
+   10: p = t2
+   11: t3 = a + b
+   12: q = t3
+   13: print p
+   14: print q
+   15: t4 = a * 4
+   16: s4 = t4
+   17: t5 = a * 8
+   18: s8 = t5
+   19: print s4
+   20: print s8
+
+================================================================
+PHASE 5: OPTIMIZATION  (Lecture 9)
+================================================================
+
+Basic Blocks (3 total):
+  Block 0:
+    x = 10
+    t1 = x < 20
+    ifFalse t1 goto L1
+  Block 1:
+    x = 99
+    print x
+  Block 2:
+    L1:
+    print x
+    a = 4
+    b = 7
+    t2 = a + b
+    p = t2
+    t3 = a + b
+    q = t3
+    print p
+    print q
+    t4 = a * 4
+    s4 = t4
+    t5 = a * 8
+    s8 = t5
+    print s4
+    print s8
+
+Control Flow Graph (3 nodes):
+  Block 0              pred=entry           succ=[1, 2]
+  Block 1              pred=[0]             succ=[2]
+  Block 2  [L1]        pred=[0, 1]          succ=exit
+
+DAG Analysis per Basic Block:
+  Block 0 (3 quad(s)):
+    Leaf nodes : 10, 20
+    #3[t1] = 10 < 20
+  Block 1 (2 quad(s)):
+    Leaf nodes : 99
+  Block 2 (16 quad(s)):
+    Leaf nodes : 4, 7, 8
+    #3[t2,p,t3,q] = 4 + 7
+    #4[t4,s4] = 4 * 4
+    #6[t5,s8] = 4 * 8
+    *** 1 common subexpression(s) detected ***
+
+  Total CSE savings possible: 1 expression(s)
+
+Liveness Analysis:
+  Block 0: live_in={}                             live_out={x}
+  Block 1: live_in={}                             live_out={x}
+  Block 2: live_in={x}                            live_out={}
+
+Optimization Report (14 action(s)):
+  [Constant Folding] t2 = 4 + 7 => t2 = 11
+  [Constant Folding] t3 = 4 + 7 => t3 = 11
+  [Constant Folding] t4 = 4 * 4 => t4 = 16
+  [Constant Folding] t5 = 4 * 8 => t5 = 32
+  [Dead Code Elimination] removed unused: a = 4
+  [Dead Code Elimination] removed unused: b = 7
+  [Dead Code Elimination] removed unused: t2 = 11
+  [Dead Code Elimination] removed unused: p = 11
+  [Dead Code Elimination] removed unused: t3 = 11
+  [Dead Code Elimination] removed unused: q = 11
+  [Dead Code Elimination] removed unused: t4 = 16
+  [Dead Code Elimination] removed unused: s4 = 16
+  [Dead Code Elimination] removed unused: t5 = 32
+  [Dead Code Elimination] removed unused: s8 = 32
+
+Optimized TAC:
+    0: x = 10
+    1: t1 = 10 < 20
+    2: ifFalse t1 goto L1
+    3: x = 99
+    4: print 99
+    5: L1:
+    6: print x
+    7: print 11
+    8: print 11
+    9: print 16
+   10: print 32
+
+Instructions before: 21, after: 11
+
+================================================================
+PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)
+================================================================
+    AR_INIT 14    ; push 14-byte activation record  (SP = SP - 14)
+    FP_SET         ; frame pointer = SP  (anchors activation record)
+    MOV 10, R1
+    MOV R1, x
+    MOV 10, R3
+    MOV R3, R2
+    MOV 20, R4
+    CMPLT R4, R2
+    JZ R2, L1
+    MOV 99, R5
+    MOV R5, x
+    MOV 99, R6
+    PRINT R6
+LABEL L1
+    MOV x, R7
+    PRINT R7
+    MOV 11, R8
+    PRINT R8
+    MOV 11, R9
+    PRINT R9
+    MOV 16, R10
+    PRINT R10
+    MOV 32, R11
+    PRINT R11
+    AR_RET         ; pop activation record  (SP = SP + 14)
+
+Address Descriptors (final state):
+  NAME          LOCATIONS
+  ----------------------------------
+  a             {mem}
+  b             {mem}
+  p             {mem}
+  q             {mem}
+  s4            {mem}
+  s8            {mem}
+  t1            {R2}
+  x             {R7, mem}
+
+================================================================
+COMPILATION SUCCESSFUL
+================================================================
+

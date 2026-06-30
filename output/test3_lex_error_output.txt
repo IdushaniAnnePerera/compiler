@@ -1,31 +1,32 @@
-SimpleLang Compiler - compiling: tests/test3_lex_error.sl
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test3_lex_error.sl
 
 ================================================================
-PHASE 1: LEXICAL ANALYSIS (Tokens)
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
 ================================================================
-TYPE      VALUE               LINE  
-------------------------------------
-KEYWORD   int                 2     
-OP        =                   2     
-NUMBER    5                   2     
-DELIM     ;                   2     
-KEYWORD   int                 3     
-ID        x                   3     
-OP        =                   3     
-DELIM     ;                   3     
-KEYWORD   print               4     
-DELIM     (                   4     
-KEYWORD   int                 5     
-ID        y                   5     
-OP        =                   5     
-NUMBER    7                   5     
-NUMBER    3                   5     
-DELIM     ;                   5     
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   2     1
+OP          =                     2     11
+NUMBER      5                     2     13
+DELIM       ;                     2     14
+KEYWORD     int                   3     1
+ID          x                     3     5
+OP          =                     3     7
+DELIM       ;                     3     15
+KEYWORD     print                 4     1
+DELIM       (                     4     6
+KEYWORD     int                   5     1
+ID          y                     5     5
+OP          =                     5     7
+NUMBER      7                     5     9
+NUMBER      3                     5     13
+DELIM       ;                     5     14
 
 Lexical Errors:
-  Lexical Error (line 2): Invalid identifier '2name'
-  Lexical Error (line 3): Malformed number '12.3.4'
-  Lexical Error (line 4): Unterminated string literal
-  Lexical Error (line 5): Invalid symbol '@'
+  Lexical Error (line 2, col 5): Invalid identifier '2name'
+  Lexical Error (line 3, col 9): Malformed number '12.3.4'
+  Lexical Error (line 4, col 7): Unterminated string literal
+  Lexical Error (line 5, col 11): Invalid symbol '@'
 
 Compilation stopped at lexical phase.
+

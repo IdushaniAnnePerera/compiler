@@ -1,0 +1,84 @@
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test8_array_bounds_error.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
+================================================================
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   3     1
+ID          data                  3     5
+DELIM       [                     3     9
+NUMBER      3                     3     10
+DELIM       ]                     3     11
+DELIM       ;                     3     12
+ID          data                  5     1
+DELIM       [                     5     5
+NUMBER      0                     5     6
+DELIM       ]                     5     7
+OP          =                     5     9
+NUMBER      100                   5     11
+DELIM       ;                     5     14
+ID          data                  6     1
+DELIM       [                     6     5
+NUMBER      5                     6     6
+DELIM       ]                     6     7
+OP          =                     6     9
+NUMBER      999                   6     11
+DELIM       ;                     6     14
+KEYWORD     print                 8     1
+DELIM       (                     8     6
+ID          data                  8     7
+DELIM       [                     8     11
+NUMBER      0                     8     12
+DELIM       ]                     8     13
+DELIM       )                     8     14
+DELIM       ;                     8     15
+KEYWORD     print                 9     1
+DELIM       (                     9     6
+ID          data                  9     7
+DELIM       [                     9     11
+OP          -                     9     12
+NUMBER      1                     9     13
+DELIM       ]                     9     14
+DELIM       )                     9     15
+DELIM       ;                     9     16
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    ArrayDecl int data[3]
+    ArrayAssign data[
+      Num 0
+    ] =
+      Num 100
+    ArrayAssign data[
+      Num 5
+    ] =
+      Num 999
+    Print
+      ArrayAccess data[
+        Num 0
+      ]
+    Print
+      ArrayAccess data[
+        UnaryOp '-'
+          Num 1
+      ]
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
+================================================================
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  data          int[3]        6         0
+
+  Total activation-record size: 6 bytes
+
+Semantic Errors:
+  Semantic Error (line 6): array 'data' index 5 out of bounds [0..2]
+
+Compilation stopped at semantic phase.
+

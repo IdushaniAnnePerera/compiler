@@ -1,94 +1,94 @@
-SimpleLang Compiler - compiling: tests\test1_valid.sl
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test1_valid.sl
 
 ================================================================
-PHASE 1: LEXICAL ANALYSIS (Tokens)
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
 ================================================================
-TYPE      VALUE               LINE  
-------------------------------------
-KEYWORD   int                 2     
-ID        a                   2     
-OP        =                   2     
-NUMBER    5                   2     
-DELIM     ;                   2     
-KEYWORD   int                 3     
-ID        b                   3     
-OP        =                   3     
-NUMBER    10                  3     
-DELIM     ;                   3     
-KEYWORD   int                 4     
-ID        sum                 4     
-DELIM     ;                   4     
-ID        sum                 5     
-OP        =                   5     
-ID        a                   5     
-OP        +                   5     
-ID        b                   5     
-OP        *                   5     
-NUMBER    2                   5     
-DELIM     ;                   5     
-KEYWORD   float               6     
-ID        pi                  6     
-OP        =                   6     
-NUMBER    3.14                6     
-DELIM     ;                   6     
-KEYWORD   bool                7     
-ID        flag                7     
-OP        =                   7     
-ID        a                   7     
-OP        <                   7     
-ID        b                   7     
-DELIM     ;                   7     
-KEYWORD   if                  9     
-DELIM     (                   9     
-ID        flag                9     
-DELIM     )                   9     
-KEYWORD   begin               9     
-KEYWORD   print               10    
-DELIM     (                   10    
-STRING    a is smaller        10    
-DELIM     )                   10    
-DELIM     ;                   10    
-KEYWORD   print               11    
-DELIM     (                   11    
-ID        sum                 11    
-DELIM     )                   11    
-DELIM     ;                   11    
-KEYWORD   end                 12    
-KEYWORD   else                12    
-KEYWORD   begin               12    
-KEYWORD   print               13    
-DELIM     (                   13    
-STRING    a is bigger         13    
-DELIM     )                   13    
-DELIM     ;                   13    
-KEYWORD   end                 14    
-KEYWORD   int                 16    
-ID        i                   16    
-OP        =                   16    
-NUMBER    0                   16    
-DELIM     ;                   16    
-KEYWORD   while               17    
-DELIM     (                   17    
-ID        i                   17    
-OP        <                   17    
-NUMBER    3                   17    
-DELIM     )                   17    
-KEYWORD   begin               17    
-KEYWORD   print               18    
-DELIM     (                   18    
-ID        i                   18    
-DELIM     )                   18    
-DELIM     ;                   18    
-ID        i                   19    
-OP        =                   19    
-ID        i                   19    
-OP        +                   19    
-NUMBER    1                   19    
-DELIM     ;                   19    
-KEYWORD   end                 20    
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   2     1
+ID          a                     2     5
+OP          =                     2     7
+NUMBER      5                     2     9
+DELIM       ;                     2     10
+KEYWORD     int                   3     1
+ID          b                     3     5
+OP          =                     3     7
+NUMBER      10                    3     9
+DELIM       ;                     3     11
+KEYWORD     int                   4     1
+ID          sum                   4     5
+DELIM       ;                     4     8
+ID          sum                   5     1
+OP          =                     5     5
+ID          a                     5     7
+OP          +                     5     9
+ID          b                     5     11
+OP          *                     5     13
+NUMBER      2                     5     15
+DELIM       ;                     5     16
+KEYWORD     float                 6     1
+ID          pi                    6     7
+OP          =                     6     10
+NUMBER      3.14                  6     12
+DELIM       ;                     6     16
+KEYWORD     bool                  7     1
+ID          flag                  7     6
+OP          =                     7     11
+ID          a                     7     13
+OP          <                     7     15
+ID          b                     7     17
+DELIM       ;                     7     18
+KEYWORD     if                    9     1
+DELIM       (                     9     4
+ID          flag                  9     5
+DELIM       )                     9     9
+KEYWORD     begin                 9     11
+KEYWORD     print                 10    5
+DELIM       (                     10    10
+STRING      a is smaller          10    11
+DELIM       )                     10    25
+DELIM       ;                     10    26
+KEYWORD     print                 11    5
+DELIM       (                     11    10
+ID          sum                   11    11
+DELIM       )                     11    14
+DELIM       ;                     11    15
+KEYWORD     end                   12    1
+KEYWORD     else                  12    5
+KEYWORD     begin                 12    10
+KEYWORD     print                 13    5
+DELIM       (                     13    10
+STRING      a is bigger           13    11
+DELIM       )                     13    24
+DELIM       ;                     13    25
+KEYWORD     end                   14    1
+KEYWORD     int                   16    1
+ID          i                     16    5
+OP          =                     16    7
+NUMBER      0                     16    9
+DELIM       ;                     16    10
+KEYWORD     while                 17    1
+DELIM       (                     17    7
+ID          i                     17    8
+OP          <                     17    10
+NUMBER      3                     17    12
+DELIM       )                     17    13
+KEYWORD     begin                 17    15
+KEYWORD     print                 18    5
+DELIM       (                     18    10
+ID          i                     18    11
+DELIM       )                     18    12
+DELIM       ;                     18    13
+ID          i                     19    5
+OP          =                     19    7
+ID          i                     19    9
+OP          +                     19    11
+NUMBER      1                     19    13
+DELIM       ;                     19    14
+KEYWORD     end                   20    1
 
 ================================================================
-PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
 ================================================================
 Parsing successful. No syntax errors. AST built.
 Program
@@ -136,21 +136,24 @@ Program
             Num 1
 
 ================================================================
-PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
 ================================================================
-Symbol Table:
-  NAME          TYPE      
-  a             int       
-  b             int       
-  sum           int       
-  pi            float     
-  flag          bool      
-  i             int       
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  a             int           2         0
+  b             int           2         2
+  i             int           2         11
+  pi            float         4         6
+  flag          bool          1         10
+  sum           int           2         4
+
+  Total activation-record size: 13 bytes
 
 No semantic errors.
 
 ================================================================
-PHASE 4: INTERMEDIATE CODE (Three-Address Code)
+PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)
 ================================================================
     0: a = 5
     1: b = 10
@@ -178,78 +181,170 @@ PHASE 4: INTERMEDIATE CODE (Three-Address Code)
    23: L4:
 
 ================================================================
-PHASE 5: OPTIMIZED INTERMEDIATE CODE
+PHASE 5: OPTIMIZATION  (Lecture 9)
 ================================================================
-    0: a = 5
-    1: b = 10
-    2: sum = 25
-    3: pi = 3.14
-    4: t3 = 5 < 10
-    5: flag = t3
-    6: ifFalse flag goto L1
-    7: print "a is smaller"
-    8: print sum
-    9: goto L2
-   10: L1:
-   11: print "a is bigger"
-   12: L2:
-   13: i = 0
-   14: L3:
-   15: t4 = i < 3
-   16: ifFalse t4 goto L4
-   17: print i
-   18: t5 = i + 1
-   19: i = t5
-   20: goto L3
-   21: L4:
 
-Instructions before: 24, after: 22
+Basic Blocks (7 total):
+  Block 0:
+    a = 5
+    b = 10
+    t1 = b * 2
+    t2 = a + t1
+    sum = t2
+    pi = 3.14
+    t3 = a < b
+    flag = t3
+    ifFalse flag goto L1
+  Block 1:
+    print "a is smaller"
+    print sum
+    goto L2
+  Block 2:
+    L1:
+    print "a is bigger"
+  Block 3:
+    L2:
+    i = 0
+  Block 4:
+    L3:
+    t4 = i < 3
+    ifFalse t4 goto L4
+  Block 5:
+    print i
+    t5 = i + 1
+    i = t5
+    goto L3
+  Block 6:
+    L4:
+
+Control Flow Graph (7 nodes):
+  Block 0              pred=entry           succ=[1, 2]
+  Block 1              pred=[0]             succ=[3]
+  Block 2  [L1]        pred=[0]             succ=[3]
+  Block 3  [L2]        pred=[1, 2]          succ=[4]
+  Block 4  [L3]        pred=[3, 5]          succ=[5, 6]
+  Block 5              pred=[4]             succ=[4]
+  Block 6  [L4]        pred=[4]             succ=exit
+
+DAG Analysis per Basic Block:
+  Block 0 (9 quad(s)):
+    Leaf nodes : 5, 10, 2, 3.14
+    #4[t1] = 10 * 2
+    #5[t2,sum] = 5 + #4
+    #7[t3,flag] = 5 < 10
+  Block 1 (3 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 2 (2 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 3 (2 quad(s)):
+    Leaf nodes : 0
+  Block 4 (3 quad(s)):
+    Leaf nodes : i, 3
+    #3[t4] = i < 3
+  Block 5 (4 quad(s)):
+    Leaf nodes : i, 1
+    #3[t5,i] = i + 1
+  Block 6 (1 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+
+Liveness Analysis:
+  Block 0: live_in={}                             live_out={sum}
+  Block 1: live_in={sum}                          live_out={}
+  Block 2: live_in={}                             live_out={}
+  Block 3: live_in={}                             live_out={i}
+  Block 4: live_in={i}                            live_out={i}
+  Block 5: live_in={i}                            live_out={i}
+  Block 6: live_in={}                             live_out={}
+
+Optimization Report (8 action(s)):
+  [Constant Folding] t1 = 10 * 2 => t1 = 20
+  [Constant Folding] t2 = 5 + 20 => t2 = 25
+  [Induction Variable] 'i' incremented by +1 each iteration of loop L3
+  [Dead Code Elimination] removed unused: a = 5
+  [Dead Code Elimination] removed unused: b = 10
+  [Dead Code Elimination] removed unused: t1 = 20
+  [Dead Code Elimination] removed unused: t2 = 25
+  [Dead Code Elimination] removed unused: pi = 3.14
+
+Optimized TAC:
+    0: sum = 25
+    1: t3 = 5 < 10
+    2: flag = t3
+    3: ifFalse flag goto L1
+    4: print "a is smaller"
+    5: print sum
+    6: goto L2
+    7: L1:
+    8: print "a is bigger"
+    9: L2:
+   10: i = 0
+   11: L3:
+   12: t4 = i < 3
+   13: ifFalse t4 goto L4
+   14: print i
+   15: t5 = i + 1
+   16: i = t5
+   17: goto L3
+   18: L4:
+
+Instructions before: 24, after: 19
 
 ================================================================
-PHASE 6: TARGET CODE (Register-Based Assembly)
+PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)
 ================================================================
-    MOV 5, R1
-    MOV R1, a
-    MOV 10, R2
-    MOV R2, b
-    MOV 25, R3
-    MOV R3, sum
-    MOV 3.14, R4
-    MOV R4, pi
-    MOV 5, R6
-    MOV R6, R5
-    MOV 10, R7
-    CMPLT R7, R5
-    MOV R5, flag
-    MOV flag, R8
-    JZ R8, L1
-    MOV "a is smaller", R9
-    PRINT R9
-    MOV sum, R10
-    PRINT R10
+    AR_INIT 13    ; push 13-byte activation record  (SP = SP - 13)
+    FP_SET         ; frame pointer = SP  (anchors activation record)
+    MOV 25, R1
+    MOV R1, sum
+    MOV 5, R3
+    MOV R3, R2
+    MOV 10, R4
+    CMPLT R4, R2
+    MOV R2, flag
+    MOV flag, R5
+    JZ R5, L1
+    MOV "a is smaller", R6
+    PRINT R6
+    MOV sum, R7
+    PRINT R7
     JMP L2
 LABEL L1
-    MOV "a is bigger", R11
-    PRINT R11
+    MOV "a is bigger", R8
+    PRINT R8
 LABEL L2
-    MOV 0, R12
-    MOV R12, i
+    MOV 0, R9
+    MOV R9, i
 LABEL L3
-    MOV i, R14
-    MOV R14, R13
-    MOV 3, R15
-    CMPLT R15, R13
-    JZ R13, L4
-    MOV i, R16
-    PRINT R16
-    MOV i, R18
-    MOV R18, R17
-    MOV 1, R19
-    ADD R19, R17
-    MOV R17, i
+    MOV i, R11
+    MOV R11, R10
+    MOV 3, R12
+    CMPLT R12, R10
+    JZ R10, L4
+    MOV i, R13
+    PRINT R13
+    MOV i, R15
+    MOV R15, R14
+    MOV 1, R16
+    ADD R16, R14
+    MOV R14, i
     JMP L3
 LABEL L4
+    AR_RET         ; pop activation record  (SP = SP + 13)
+
+Address Descriptors (final state):
+  NAME          LOCATIONS
+  ----------------------------------
+  a             {mem}
+  b             {mem}
+  flag          {R5, mem}
+  i             {R11, R13, R15, mem}
+  pi            {mem}
+  sum           {R7, mem}
+  t3            {R2}
+  t4            {R10}
+  t5            {R14}
 
 ================================================================
 COMPILATION SUCCESSFUL
 ================================================================
+

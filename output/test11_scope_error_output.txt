@@ -1,0 +1,71 @@
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test11_scope_error.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
+================================================================
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   7     1
+ID          outer                 7     5
+OP          =                     7     11
+NUMBER      5                     7     13
+DELIM       ;                     7     14
+KEYWORD     if                    9     1
+DELIM       (                     9     4
+ID          outer                 9     5
+OP          <                     9     11
+NUMBER      10                    9     13
+DELIM       )                     9     15
+KEYWORD     begin                 9     17
+KEYWORD     int                   10    5
+ID          inner                 10    9
+OP          =                     10    15
+NUMBER      42                    10    17
+DELIM       ;                     10    19
+KEYWORD     print                 11    5
+DELIM       (                     11    10
+ID          inner                 11    11
+DELIM       )                     11    16
+DELIM       ;                     11    17
+KEYWORD     end                   12    1
+KEYWORD     print                 14    1
+DELIM       (                     14    6
+ID          inner                 14    7
+DELIM       )                     14    12
+DELIM       ;                     14    13
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int outer
+      Num 5
+    If
+      cond:
+        BinOp '<'
+          Var outer
+          Num 10
+      then:
+        VarDecl int inner
+          Num 42
+        Print
+          Var inner
+    Print
+      Var inner
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
+================================================================
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  outer         int           2         0
+
+  Total activation-record size: 2 bytes
+
+Semantic Errors:
+  Semantic Error (line 14): variable 'inner' used before declaration
+
+Compilation stopped at semantic phase.
+

@@ -1,47 +1,47 @@
-SimpleLang Compiler - compiling: tests/test4_sem_error.sl
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test4_sem_error.sl
 
 ================================================================
-PHASE 1: LEXICAL ANALYSIS (Tokens)
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
 ================================================================
-TYPE      VALUE               LINE  
-------------------------------------
-KEYWORD   int                 2     
-ID        a                   2     
-OP        =                   2     
-NUMBER    5                   2     
-DELIM     ;                   2     
-KEYWORD   int                 3     
-ID        a                   3     
-OP        =                   3     
-NUMBER    9                   3     
-DELIM     ;                   3     
-ID        b                   4     
-OP        =                   4     
-NUMBER    10                  4     
-DELIM     ;                   4     
-KEYWORD   bool                5     
-ID        c                   5     
-OP        =                   5     
-ID        a                   5     
-OP        +                   5     
-NUMBER    2                   5     
-DELIM     ;                   5     
-KEYWORD   if                  6     
-DELIM     (                   6     
-ID        a                   6     
-OP        +                   6     
-NUMBER    1                   6     
-DELIM     )                   6     
-KEYWORD   begin               6     
-KEYWORD   print               7     
-DELIM     (                   7     
-ID        a                   7     
-DELIM     )                   7     
-DELIM     ;                   7     
-KEYWORD   end                 8     
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   2     1
+ID          a                     2     5
+OP          =                     2     7
+NUMBER      5                     2     9
+DELIM       ;                     2     10
+KEYWORD     int                   3     1
+ID          a                     3     5
+OP          =                     3     7
+NUMBER      9                     3     9
+DELIM       ;                     3     10
+ID          b                     4     1
+OP          =                     4     3
+NUMBER      10                    4     5
+DELIM       ;                     4     7
+KEYWORD     bool                  5     1
+ID          c                     5     6
+OP          =                     5     8
+ID          a                     5     10
+OP          +                     5     12
+NUMBER      2                     5     14
+DELIM       ;                     5     15
+KEYWORD     if                    6     1
+DELIM       (                     6     4
+ID          a                     6     5
+OP          +                     6     7
+NUMBER      1                     6     9
+DELIM       )                     6     10
+KEYWORD     begin                 6     12
+KEYWORD     print                 7     5
+DELIM       (                     7     10
+ID          a                     7     11
+DELIM       )                     7     12
+DELIM       ;                     7     13
+KEYWORD     end                   8     1
 
 ================================================================
-PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
 ================================================================
 Parsing successful. No syntax errors. AST built.
 Program
@@ -65,17 +65,21 @@ Program
           Var a
 
 ================================================================
-PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
 ================================================================
-Symbol Table:
-  NAME          TYPE      
-  a             int       
-  c             bool      
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  a             int           2         0
+  c             bool          1         2
+
+  Total activation-record size: 3 bytes
 
 Semantic Errors:
-  Semantic Error (line 3): variable 'a' already declared
+  Semantic Error (line 3): variable 'a' already declared in this scope
   Semantic Error (line 4): variable 'b' used before declaration
   Semantic Error (line 5): cannot assign int to bool variable 'c'
   Semantic Error (line 6): if-condition must be bool, got int
 
 Compilation stopped at semantic phase.
+

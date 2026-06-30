@@ -1,0 +1,564 @@
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test9_operators.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
+================================================================
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   8     1
+ID          a                     8     5
+OP          =                     8     7
+NUMBER      20                    8     9
+DELIM       ;                     8     11
+KEYWORD     int                   9     1
+ID          b                     9     5
+OP          =                     9     7
+NUMBER      4                     9     9
+DELIM       ;                     9     10
+KEYWORD     int                   10    1
+ID          diff                  10    5
+OP          =                     10    10
+ID          a                     10    12
+OP          -                     10    14
+ID          b                     10    16
+DELIM       ;                     10    17
+KEYWORD     int                   11    1
+ID          quot                  11    5
+OP          =                     11    10
+ID          a                     11    12
+OP          /                     11    14
+ID          b                     11    16
+DELIM       ;                     11    17
+KEYWORD     float                 14    1
+ID          fx                    14    7
+OP          =                     14    10
+NUMBER      7.5                   14    12
+DELIM       ;                     14    15
+KEYWORD     float                 15    1
+ID          fy                    15    7
+OP          =                     15    10
+NUMBER      2.5                   15    12
+DELIM       ;                     15    15
+KEYWORD     float                 16    1
+ID          fsum                  16    7
+OP          =                     16    13
+ID          fx                    16    15
+OP          +                     16    18
+ID          fy                    16    20
+DELIM       ;                     16    22
+KEYWORD     float                 17    1
+ID          fdiff                 17    7
+OP          =                     17    13
+ID          fx                    17    15
+OP          -                     17    18
+ID          fy                    17    20
+DELIM       ;                     17    22
+KEYWORD     float                 20    1
+ID          wide                  20    7
+OP          =                     20    12
+ID          a                     20    14
+DELIM       ;                     20    15
+KEYWORD     int                   23    1
+ID          neg                   23    5
+OP          =                     23    9
+OP          -                     23    11
+ID          b                     23    12
+DELIM       ;                     23    13
+KEYWORD     bool                  26    1
+ID          t                     26    6
+OP          =                     26    8
+KEYWORD     true                  26    10
+DELIM       ;                     26    14
+KEYWORD     bool                  27    1
+ID          f                     27    6
+OP          =                     27    8
+OP          !                     27    10
+ID          t                     27    11
+DELIM       ;                     27    12
+KEYWORD     bool                  30    1
+ID          lt                    30    6
+OP          =                     30    9
+ID          a                     30    11
+OP          <                     30    13
+NUMBER      100                   30    16
+DELIM       ;                     30    19
+KEYWORD     bool                  31    1
+ID          gt                    31    6
+OP          =                     31    9
+ID          a                     31    11
+OP          >                     31    13
+ID          b                     31    16
+DELIM       ;                     31    17
+KEYWORD     bool                  32    1
+ID          le                    32    6
+OP          =                     32    9
+ID          b                     32    11
+OP          <=                    32    13
+NUMBER      4                     32    16
+DELIM       ;                     32    17
+KEYWORD     bool                  33    1
+ID          ge                    33    6
+OP          =                     33    9
+ID          a                     33    11
+OP          >=                    33    13
+NUMBER      20                    33    16
+DELIM       ;                     33    18
+KEYWORD     bool                  34    1
+ID          eq                    34    6
+OP          =                     34    9
+ID          a                     34    11
+OP          ==                    34    13
+NUMBER      20                    34    16
+DELIM       ;                     34    18
+KEYWORD     bool                  35    1
+ID          ne                    35    6
+OP          =                     35    9
+ID          a                     35    11
+OP          !=                    35    13
+ID          b                     35    16
+DELIM       ;                     35    17
+KEYWORD     bool                  38    1
+ID          both                  38    6
+OP          =                     38    13
+ID          gt                    38    15
+OP          &&                    38    18
+ID          eq                    38    21
+DELIM       ;                     38    23
+KEYWORD     bool                  39    1
+ID          either                39    6
+OP          =                     39    13
+ID          f                     39    15
+OP          ||                    39    18
+ID          ne                    39    21
+DELIM       ;                     39    23
+KEYWORD     if                    42    1
+DELIM       (                     42    4
+ID          both                  42    5
+DELIM       )                     42    9
+KEYWORD     begin                 42    11
+KEYWORD     print                 43    5
+DELIM       (                     43    10
+ID          diff                  43    11
+DELIM       )                     43    15
+DELIM       ;                     43    16
+KEYWORD     print                 44    5
+DELIM       (                     44    10
+ID          quot                  44    11
+DELIM       )                     44    15
+DELIM       ;                     44    16
+KEYWORD     end                   45    1
+KEYWORD     print                 47    1
+DELIM       (                     47    6
+ID          fsum                  47    7
+DELIM       )                     47    11
+DELIM       ;                     47    12
+KEYWORD     print                 48    1
+DELIM       (                     48    6
+ID          neg                   48    7
+DELIM       )                     48    10
+DELIM       ;                     48    11
+KEYWORD     print                 49    1
+DELIM       (                     49    6
+ID          both                  49    7
+DELIM       )                     49    11
+DELIM       ;                     49    12
+KEYWORD     print                 50    1
+DELIM       (                     50    6
+ID          either                50    7
+DELIM       )                     50    13
+DELIM       ;                     50    14
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int a
+      Num 20
+    VarDecl int b
+      Num 4
+    VarDecl int diff
+      BinOp '-'
+        Var a
+        Var b
+    VarDecl int quot
+      BinOp '/'
+        Var a
+        Var b
+    VarDecl float fx
+      Num 7.5
+    VarDecl float fy
+      Num 2.5
+    VarDecl float fsum
+      BinOp '+'
+        Var fx
+        Var fy
+    VarDecl float fdiff
+      BinOp '-'
+        Var fx
+        Var fy
+    VarDecl float wide
+      Var a
+    VarDecl int neg
+      UnaryOp '-'
+        Var b
+    VarDecl bool t
+      Bool True
+    VarDecl bool f
+      UnaryOp '!'
+        Var t
+    VarDecl bool lt
+      BinOp '<'
+        Var a
+        Num 100
+    VarDecl bool gt
+      BinOp '>'
+        Var a
+        Var b
+    VarDecl bool le
+      BinOp '<='
+        Var b
+        Num 4
+    VarDecl bool ge
+      BinOp '>='
+        Var a
+        Num 20
+    VarDecl bool eq
+      BinOp '=='
+        Var a
+        Num 20
+    VarDecl bool ne
+      BinOp '!='
+        Var a
+        Var b
+    VarDecl bool both
+      BinOp '&&'
+        Var gt
+        Var eq
+    VarDecl bool either
+      BinOp '||'
+        Var f
+        Var ne
+    If
+      cond:
+        Var both
+      then:
+        Print
+          Var diff
+        Print
+          Var quot
+    Print
+      Var fsum
+    Print
+      Var neg
+    Print
+      Var both
+    Print
+      Var either
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
+================================================================
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  either        bool          1         39
+  f             bool          1         31
+  a             int           2         0
+  b             int           2         2
+  diff          int           2         4
+  le            bool          1         34
+  fdiff         float         4         20
+  ne            bool          1         37
+  t             bool          1         30
+  both          bool          1         38
+  quot          int           2         6
+  fy            float         4         12
+  fx            float         4         8
+  lt            bool          1         32
+  ge            bool          1         35
+  fsum          float         4         16
+  neg           int           2         28
+  eq            bool          1         36
+  gt            bool          1         33
+  wide          float         4         24
+
+  Total activation-record size: 40 bytes
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)
+================================================================
+    0: a = 20
+    1: b = 4
+    2: t1 = a - b
+    3: diff = t1
+    4: t2 = a / b
+    5: quot = t2
+    6: fx = 7.5
+    7: fy = 2.5
+    8: t3 = fx + fy
+    9: fsum = t3
+   10: t4 = fx - fy
+   11: fdiff = t4
+   12: wide = a
+   13: t5 = -b
+   14: neg = t5
+   15: t = true
+   16: t6 = !t
+   17: f = t6
+   18: t7 = a < 100
+   19: lt = t7
+   20: t8 = a > b
+   21: gt = t8
+   22: t9 = b <= 4
+   23: le = t9
+   24: t10 = a >= 20
+   25: ge = t10
+   26: t11 = a == 20
+   27: eq = t11
+   28: t12 = a != b
+   29: ne = t12
+   30: t13 = gt && eq
+   31: both = t13
+   32: t14 = f || ne
+   33: either = t14
+   34: ifFalse both goto L1
+   35: print diff
+   36: print quot
+   37: L1:
+   38: print fsum
+   39: print neg
+   40: print both
+   41: print either
+
+================================================================
+PHASE 5: OPTIMIZATION  (Lecture 9)
+================================================================
+
+Basic Blocks (3 total):
+  Block 0:
+    a = 20
+    b = 4
+    t1 = a - b
+    diff = t1
+    t2 = a / b
+    quot = t2
+    fx = 7.5
+    fy = 2.5
+    t3 = fx + fy
+    fsum = t3
+    t4 = fx - fy
+    fdiff = t4
+    wide = a
+    t5 = -b
+    neg = t5
+    t = true
+    t6 = !t
+    f = t6
+    t7 = a < 100
+    lt = t7
+    t8 = a > b
+    gt = t8
+    t9 = b <= 4
+    le = t9
+    t10 = a >= 20
+    ge = t10
+    t11 = a == 20
+    eq = t11
+    t12 = a != b
+    ne = t12
+    t13 = gt && eq
+    both = t13
+    t14 = f || ne
+    either = t14
+    ifFalse both goto L1
+  Block 1:
+    print diff
+    print quot
+  Block 2:
+    L1:
+    print fsum
+    print neg
+    print both
+    print either
+
+Control Flow Graph (3 nodes):
+  Block 0              pred=entry           succ=[1, 2]
+  Block 1              pred=[0]             succ=[2]
+  Block 2  [L1]        pred=[0, 1]          succ=exit
+
+DAG Analysis per Basic Block:
+  Block 0 (35 quad(s)):
+    Leaf nodes : 20, 4, 7.5, 2.5, t5, true, t6, 100
+    #3[t1,diff] = 20 - 4
+    #4[t2,quot] = 20 / 4
+    #7[t3,fsum] = 7.5 + 2.5
+    #8[t4,fdiff] = 7.5 - 2.5
+    #13[t7,lt] = 20 < 100
+    #14[t8,gt] = 20 > 4
+    #15[t9,le] = 4 <= 4
+    #16[t10,ge] = 20 >= 20
+    #17[t11,eq] = 20 == 20
+    #18[t12,ne] = 20 != 4
+    #19[t13,both] = #14 && #17
+    #20[t14,either] = t6 || #18
+  Block 1 (2 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+  Block 2 (5 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+
+Liveness Analysis:
+  Block 0: live_in={}                             live_out={both, diff, either, fsum, neg, quot}
+  Block 1: live_in={both, diff, either, fsum, neg, quot} live_out={both, either, fsum, neg}
+  Block 2: live_in={both, either, fsum, neg}      live_out={}
+
+Optimization Report (21 action(s)):
+  [Constant Folding] t1 = 20 - 4 => t1 = 16
+  [Constant Folding] t2 = 20 / 4 => t2 = 5.0
+  [Constant Folding] t3 = 7.5 + 2.5 => t3 = 10.0
+  [Constant Folding] t4 = 7.5 - 2.5 => t4 = 5.0
+  [Dead Code Elimination] removed unused: a = 20
+  [Dead Code Elimination] removed unused: b = 4
+  [Dead Code Elimination] removed unused: t1 = 16
+  [Dead Code Elimination] removed unused: t2 = 5.0
+  [Dead Code Elimination] removed unused: fx = 7.5
+  [Dead Code Elimination] removed unused: fy = 2.5
+  [Dead Code Elimination] removed unused: t3 = 10.0
+  [Dead Code Elimination] removed unused: t4 = 5.0
+  [Dead Code Elimination] removed unused: fdiff = 5.0
+  [Dead Code Elimination] removed unused: wide = 20
+  [Dead Code Elimination] removed unused: t = true
+  [Dead Code Elimination] removed unused: lt = t7
+  [Dead Code Elimination] removed unused: le = t9
+  [Dead Code Elimination] removed unused: ge = t10
+  [Dead Code Elimination] removed unused: t7 = 20 < 100
+  [Dead Code Elimination] removed unused: t9 = 4 <= 4
+  [Dead Code Elimination] removed unused: t10 = 20 >= 20
+
+Optimized TAC:
+    0: diff = 16
+    1: quot = 5.0
+    2: fsum = 10.0
+    3: t5 = -4
+    4: neg = t5
+    5: t6 = !true
+    6: f = t6
+    7: t8 = 20 > 4
+    8: gt = t8
+    9: t11 = 20 == 20
+   10: eq = t11
+   11: t12 = 20 != 4
+   12: ne = t12
+   13: t13 = gt && eq
+   14: both = t13
+   15: t14 = f || ne
+   16: either = t14
+   17: ifFalse both goto L1
+   18: print diff
+   19: print quot
+   20: L1:
+   21: print fsum
+   22: print neg
+   23: print both
+   24: print either
+
+Instructions before: 42, after: 25
+
+================================================================
+PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)
+================================================================
+    AR_INIT 40    ; push 40-byte activation record  (SP = SP - 40)
+    FP_SET         ; frame pointer = SP  (anchors activation record)
+    MOV 16, R1
+    MOV R1, diff
+    MOV 5.0, R2
+    MOV R2, quot
+    MOV 10.0, R3
+    MOV R3, fsum
+    MOV 4, R5
+    MOV R5, R4
+    NEG R4
+    MOV R4, neg
+    MOV R7, R6
+    NOT R6
+    MOV R6, f
+    MOV 20, R9
+    MOV R9, R8
+    MOV 4, R10
+    CMPGT R10, R8
+    MOV R8, gt
+    MOV 20, R12
+    MOV R12, R11
+    MOV 20, R13
+    CMPEQ R13, R11
+    MOV R11, eq
+    MOV 20, R15
+    MOV R15, R14
+    MOV 4, R16
+    CMPNE R16, R14
+    MOV R14, ne
+    MOV gt, R18
+    MOV R18, R17
+    MOV eq, R19
+    AND R19, R17
+    MOV R17, both
+    MOV f, R21
+    MOV R21, R20
+    MOV ne, R22
+    OR R22, R20
+    MOV R20, either
+    MOV both, R23
+    JZ R23, L1
+    MOV diff, R24
+    PRINT R24
+    MOV quot, R25
+    PRINT R25
+LABEL L1
+    MOV fsum, R26
+    PRINT R26
+    MOV neg, R27
+    PRINT R27
+    MOV both, R28
+    PRINT R28
+    MOV either, R29
+    PRINT R29
+    AR_RET         ; pop activation record  (SP = SP + 40)
+
+Address Descriptors (final state):
+  NAME          LOCATIONS
+  ----------------------------------
+  a             {mem}
+  b             {mem}
+  both          {R23, R28, mem}
+  diff          {R24, mem}
+  either        {R29, mem}
+  eq            {R19, mem}
+  f             {R21, mem}
+  fdiff         {mem}
+  fsum          {R26, mem}
+  fx            {mem}
+  fy            {mem}
+  ge            {mem}
+  gt            {R18, mem}
+  le            {mem}
+  lt            {mem}
+  ne            {R22, mem}
+  neg           {R27, mem}
+  quot          {R25, mem}
+  t             {mem}
+  t11           {R11}
+  t12           {R14}
+  t13           {R17}
+  t14           {R20}
+  t5            {R4}
+  t6            {R6}
+  t8            {R8}
+  true          {R7}
+  wide          {mem}
+
+================================================================
+COMPILATION SUCCESSFUL
+================================================================
+

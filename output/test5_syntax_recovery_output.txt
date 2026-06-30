@@ -1,43 +1,44 @@
-SimpleLang Compiler - compiling: tests/test5_syntax_recovery.sl
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test5_syntax_recovery.sl
 
 ================================================================
-PHASE 1: LEXICAL ANALYSIS (Tokens)
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
 ================================================================
-TYPE      VALUE               LINE  
-------------------------------------
-KEYWORD   int                 2     
-ID        x                   2     
-OP        =                   2     
-NUMBER    5                   2     
-OP        +                   2     
-NUMBER    3                   2     
-KEYWORD   int                 3     
-ID        y                   3     
-OP        =                   3     
-NUMBER    10                  3     
-DELIM     ;                   3     
-KEYWORD   int                 4     
-ID        z                   4     
-OP        =                   4     
-DELIM     ;                   4     
-KEYWORD   print               5     
-DELIM     (                   5     
-ID        y                   5     
-DELIM     )                   5     
-DELIM     ;                   5     
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   2     1
+ID          x                     2     5
+OP          =                     2     7
+NUMBER      5                     2     9
+OP          +                     2     11
+NUMBER      3                     2     13
+KEYWORD     int                   3     1
+ID          y                     3     5
+OP          =                     3     7
+NUMBER      10                    3     9
+DELIM       ;                     3     11
+KEYWORD     int                   4     1
+ID          z                     4     5
+OP          =                     4     7
+DELIM       ;                     4     9
+KEYWORD     print                 5     1
+DELIM       (                     5     6
+ID          y                     5     7
+DELIM       )                     5     8
+DELIM       ;                     5     9
 
 ================================================================
-PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
 ================================================================
-Syntax errors detected (parser used panic-mode recovery):
+Syntax errors (parser used panic-mode recovery):
   Syntax Error (line 3): expected ';' but found 'int'
   --> Panic-mode recovery near 'int': skipped to delimiter, resuming parsing.
   Syntax Error (line 4): unexpected token ';' in expression
   --> Panic-mode recovery near 'next statement': skipped to delimiter, resuming parsing.
 
-Parsing recovered and continued; AST built from the valid statements:
+Parsing recovered and continued; AST built from valid statements:
 Program
     Print
       Var y
 
 Compilation stopped after syntax phase due to errors above.
+

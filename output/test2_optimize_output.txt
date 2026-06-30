@@ -1,53 +1,53 @@
-SimpleLang Compiler - compiling: tests/test2_optimize.sl
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test2_optimize.sl
 
 ================================================================
-PHASE 1: LEXICAL ANALYSIS (Tokens)
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
 ================================================================
-TYPE      VALUE               LINE  
-------------------------------------
-KEYWORD   int                 2     
-ID        x                   2     
-OP        =                   2     
-NUMBER    3                   2     
-OP        +                   2     
-NUMBER    4                   2     
-OP        *                   2     
-NUMBER    2                   2     
-DELIM     ;                   2     
-KEYWORD   int                 3     
-ID        y                   3     
-OP        =                   3     
-ID        x                   3     
-OP        *                   3     
-NUMBER    1                   3     
-DELIM     ;                   3     
-KEYWORD   int                 4     
-ID        z                   4     
-OP        =                   4     
-ID        y                   4     
-OP        +                   4     
-NUMBER    0                   4     
-DELIM     ;                   4     
-KEYWORD   int                 5     
-ID        w                   5     
-OP        =                   5     
-ID        x                   5     
-OP        *                   5     
-NUMBER    0                   5     
-DELIM     ;                   5     
-KEYWORD   print               6     
-DELIM     (                   6     
-ID        x                   6     
-DELIM     )                   6     
-DELIM     ;                   6     
-KEYWORD   print               7     
-DELIM     (                   7     
-ID        w                   7     
-DELIM     )                   7     
-DELIM     ;                   7     
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   2     1
+ID          x                     2     5
+OP          =                     2     7
+NUMBER      3                     2     9
+OP          +                     2     11
+NUMBER      4                     2     13
+OP          *                     2     15
+NUMBER      2                     2     17
+DELIM       ;                     2     18
+KEYWORD     int                   3     1
+ID          y                     3     5
+OP          =                     3     7
+ID          x                     3     9
+OP          *                     3     11
+NUMBER      1                     3     13
+DELIM       ;                     3     14
+KEYWORD     int                   4     1
+ID          z                     4     5
+OP          =                     4     7
+ID          y                     4     9
+OP          +                     4     11
+NUMBER      0                     4     13
+DELIM       ;                     4     14
+KEYWORD     int                   5     1
+ID          w                     5     5
+OP          =                     5     7
+ID          x                     5     9
+OP          *                     5     11
+NUMBER      0                     5     13
+DELIM       ;                     5     14
+KEYWORD     print                 6     1
+DELIM       (                     6     6
+ID          x                     6     7
+DELIM       )                     6     8
+DELIM       ;                     6     9
+KEYWORD     print                 7     1
+DELIM       (                     7     6
+ID          w                     7     7
+DELIM       )                     7     8
+DELIM       ;                     7     9
 
 ================================================================
-PHASE 2: SYNTAX ANALYSIS (Parse Tree / AST)
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
 ================================================================
 Parsing successful. No syntax errors. AST built.
 Program
@@ -75,19 +75,22 @@ Program
       Var w
 
 ================================================================
-PHASE 3: SEMANTIC ANALYSIS (Symbol Table & Type Checks)
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
 ================================================================
-Symbol Table:
-  NAME          TYPE      
-  x             int       
-  y             int       
-  z             int       
-  w             int       
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  w             int           2         6
+  y             int           2         2
+  x             int           2         0
+  z             int           2         4
+
+  Total activation-record size: 8 bytes
 
 No semantic errors.
 
 ================================================================
-PHASE 4: INTERMEDIATE CODE (Three-Address Code)
+PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)
 ================================================================
     0: t1 = 4 * 2
     1: t2 = 3 + t1
@@ -102,33 +105,80 @@ PHASE 4: INTERMEDIATE CODE (Three-Address Code)
    10: print w
 
 ================================================================
-PHASE 5: OPTIMIZED INTERMEDIATE CODE
+PHASE 5: OPTIMIZATION  (Lecture 9)
 ================================================================
-    0: x = 11
-    1: y = 11
-    2: z = 11
-    3: w = 0
-    4: print 11
-    5: print 0
 
-Instructions before: 11, after: 6
+Basic Blocks (1 total):
+  Block 0:
+    t1 = 4 * 2
+    t2 = 3 + t1
+    x = t2
+    t3 = x * 1
+    y = t3
+    t4 = y + 0
+    z = t4
+    t5 = x * 0
+    w = t5
+    print x
+    print w
+
+Control Flow Graph (1 nodes):
+  Block 0              pred=entry           succ=exit
+
+DAG Analysis per Basic Block:
+  Block 0 (11 quad(s)):
+    Leaf nodes : 4, 2, 3, 1, 0
+    #3[t1] = 4 * 2
+    #5[t2,x] = 3 + #3
+    #7[t3,y] = #5 * 1
+    #9[t4,z] = #7 + 0
+    #10[t5,w] = #5 * 0
+
+Liveness Analysis:
+  Block 0: live_in={}                             live_out={}
+
+Optimization Report (14 action(s)):
+  [Constant Folding] t1 = 4 * 2 => t1 = 8
+  [Constant Folding] t2 = 3 + 8 => t2 = 11
+  [Constant Folding] t3 = 11 * 1 => t3 = 11
+  [Constant Folding] t4 = 11 + 0 => t4 = 11
+  [Constant Folding] t5 = 11 * 0 => t5 = 0
+  [Dead Code Elimination] removed unused: t1 = 8
+  [Dead Code Elimination] removed unused: t2 = 11
+  [Dead Code Elimination] removed unused: x = 11
+  [Dead Code Elimination] removed unused: t3 = 11
+  [Dead Code Elimination] removed unused: y = 11
+  [Dead Code Elimination] removed unused: t4 = 11
+  [Dead Code Elimination] removed unused: z = 11
+  [Dead Code Elimination] removed unused: t5 = 0
+  [Dead Code Elimination] removed unused: w = 0
+
+Optimized TAC:
+    0: print 11
+    1: print 0
+
+Instructions before: 11, after: 2
 
 ================================================================
-PHASE 6: TARGET CODE (Register-Based Assembly)
+PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)
 ================================================================
+    AR_INIT 8     ; push 8-byte activation record  (SP = SP - 8)
+    FP_SET         ; frame pointer = SP  (anchors activation record)
     MOV 11, R1
-    MOV R1, x
-    MOV 11, R2
-    MOV R2, y
-    MOV 11, R3
-    MOV R3, z
-    MOV 0, R4
-    MOV R4, w
-    MOV 11, R5
-    PRINT R5
-    MOV 0, R6
-    PRINT R6
+    PRINT R1
+    MOV 0, R2
+    PRINT R2
+    AR_RET         ; pop activation record  (SP = SP + 8)
+
+Address Descriptors (final state):
+  NAME          LOCATIONS
+  ----------------------------------
+  w             {mem}
+  x             {mem}
+  y             {mem}
+  z             {mem}
 
 ================================================================
 COMPILATION SUCCESSFUL
 ================================================================
+

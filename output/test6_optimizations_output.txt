@@ -1,0 +1,482 @@
+﻿SimpleLang Compiler � compiling: D:\temp\claude\C--Users-user\61cc5569-371b-4c19-b121-4cc809ffa0a4\scratchpad\compiler\tests\test6_optimizations.sl
+
+================================================================
+PHASE 1: LEXICAL ANALYSIS  (FA-based DFA Scanner)
+================================================================
+TYPE        VALUE                 LINE  COL
+------------------------------------------------
+KEYWORD     int                   12    1
+ID          a                     12    5
+OP          =                     12    7
+NUMBER      3                     12    9
+DELIM       ;                     12    10
+KEYWORD     int                   13    1
+ID          b                     13    5
+OP          =                     13    7
+NUMBER      5                     13    9
+DELIM       ;                     13    10
+KEYWORD     int                   14    1
+ID          i                     14    5
+OP          =                     14    7
+NUMBER      0                     14    9
+DELIM       ;                     14    10
+KEYWORD     int                   15    1
+ID          n                     15    5
+OP          =                     15    7
+NUMBER      10                    15    9
+DELIM       ;                     15    11
+KEYWORD     int                   16    1
+ID          x                     16    5
+OP          =                     16    7
+NUMBER      0                     16    9
+DELIM       ;                     16    10
+KEYWORD     int                   19    1
+ID          dead_var              19    5
+OP          =                     19    14
+ID          a                     19    16
+OP          +                     19    18
+ID          b                     19    20
+DELIM       ;                     19    21
+KEYWORD     while                 22    1
+DELIM       (                     22    7
+ID          i                     22    8
+OP          <                     22    10
+ID          n                     22    12
+DELIM       )                     22    13
+KEYWORD     begin                 22    15
+KEYWORD     int                   23    5
+ID          inv                   23    9
+OP          =                     23    17
+ID          b                     23    19
+OP          +                     23    21
+ID          a                     23    23
+DELIM       ;                     23    24
+KEYWORD     int                   24    5
+ID          doubled               24    9
+OP          =                     24    17
+ID          i                     24    19
+OP          *                     24    21
+NUMBER      2                     24    23
+DELIM       ;                     24    24
+ID          x                     25    5
+OP          =                     25    7
+ID          x                     25    9
+OP          +                     25    11
+ID          inv                   25    13
+OP          +                     25    17
+ID          doubled               25    19
+DELIM       ;                     25    26
+ID          i                     26    5
+OP          =                     26    7
+ID          i                     26    9
+OP          +                     26    11
+NUMBER      1                     26    13
+DELIM       ;                     26    14
+KEYWORD     end                   27    1
+KEYWORD     bool                  30    1
+ID          flag                  30    6
+OP          =                     30    11
+ID          x                     30    13
+OP          <                     30    15
+NUMBER      100                   30    17
+DELIM       ;                     30    20
+KEYWORD     if                    31    1
+DELIM       (                     31    4
+ID          flag                  31    5
+DELIM       )                     31    9
+KEYWORD     begin                 31    11
+KEYWORD     int                   32    5
+ID          r1                    32    9
+OP          =                     32    12
+ID          a                     32    14
+OP          +                     32    16
+ID          b                     32    18
+DELIM       ;                     32    19
+KEYWORD     print                 33    5
+DELIM       (                     33    10
+ID          r1                    33    11
+DELIM       )                     33    13
+DELIM       ;                     33    14
+KEYWORD     end                   34    1
+KEYWORD     else                  34    5
+KEYWORD     begin                 34    10
+KEYWORD     int                   35    5
+ID          r2                    35    9
+OP          =                     35    12
+ID          a                     35    14
+OP          +                     35    16
+ID          b                     35    18
+DELIM       ;                     35    19
+KEYWORD     print                 36    5
+DELIM       (                     36    10
+ID          r2                    36    11
+DELIM       )                     36    13
+DELIM       ;                     36    14
+KEYWORD     end                   37    1
+KEYWORD     print                 39    1
+DELIM       (                     39    6
+ID          x                     39    7
+DELIM       )                     39    8
+DELIM       ;                     39    9
+
+================================================================
+PHASE 2: SYNTAX ANALYSIS  (Recursive-Descent Parser)
+================================================================
+Parsing successful. No syntax errors. AST built.
+Program
+    VarDecl int a
+      Num 3
+    VarDecl int b
+      Num 5
+    VarDecl int i
+      Num 0
+    VarDecl int n
+      Num 10
+    VarDecl int x
+      Num 0
+    VarDecl int dead_var
+      BinOp '+'
+        Var a
+        Var b
+    While
+      cond:
+        BinOp '<'
+          Var i
+          Var n
+      body:
+        VarDecl int inv
+          BinOp '+'
+            Var b
+            Var a
+        VarDecl int doubled
+          BinOp '*'
+            Var i
+            Num 2
+        Assign x
+          BinOp '+'
+            BinOp '+'
+              Var x
+              Var inv
+            Var doubled
+        Assign i
+          BinOp '+'
+            Var i
+            Num 1
+    VarDecl bool flag
+      BinOp '<'
+        Var x
+        Num 100
+    If
+      cond:
+        Var flag
+      then:
+        VarDecl int r1
+          BinOp '+'
+            Var a
+            Var b
+        Print
+          Var r1
+      else:
+        VarDecl int r2
+          BinOp '+'
+            Var a
+            Var b
+        Print
+          Var r2
+    Print
+      Var x
+
+================================================================
+PHASE 3: SEMANTIC ANALYSIS  (Scope / Type / Array-Bounds)
+================================================================
+Symbol Table  (backed by hand-coded HashTable, DJB2 hash):
+  NAME          TYPE          SIZE(B)   OFFSET(B)
+  ----------------------------------------------
+  a             int           2         0
+  b             int           2         2
+  n             int           2         6
+  i             int           2         4
+  dead_var      int           2         10
+  x             int           2         8
+  flag          bool          1         12
+
+  Total activation-record size: 13 bytes
+
+No semantic errors.
+
+================================================================
+PHASE 4: INTERMEDIATE CODE  (Three-Address Code / Quadruples)
+================================================================
+    0: a = 3
+    1: b = 5
+    2: i = 0
+    3: n = 10
+    4: x = 0
+    5: t1 = a + b
+    6: dead_var = t1
+    7: L1:
+    8: t2 = i < n
+    9: ifFalse t2 goto L2
+   10: t3 = b + a
+   11: inv = t3
+   12: t4 = i * 2
+   13: doubled = t4
+   14: t5 = x + inv
+   15: t6 = t5 + doubled
+   16: x = t6
+   17: t7 = i + 1
+   18: i = t7
+   19: goto L1
+   20: L2:
+   21: t8 = x < 100
+   22: flag = t8
+   23: ifFalse flag goto L3
+   24: t9 = a + b
+   25: r1 = t9
+   26: print r1
+   27: goto L4
+   28: L3:
+   29: t10 = a + b
+   30: r2 = t10
+   31: print r2
+   32: L4:
+   33: print x
+
+================================================================
+PHASE 5: OPTIMIZATION  (Lecture 9)
+================================================================
+
+Basic Blocks (7 total):
+  Block 0:
+    a = 3
+    b = 5
+    i = 0
+    n = 10
+    x = 0
+    t1 = a + b
+    dead_var = t1
+  Block 1:
+    L1:
+    t2 = i < n
+    ifFalse t2 goto L2
+  Block 2:
+    t3 = b + a
+    inv = t3
+    t4 = i * 2
+    doubled = t4
+    t5 = x + inv
+    t6 = t5 + doubled
+    x = t6
+    t7 = i + 1
+    i = t7
+    goto L1
+  Block 3:
+    L2:
+    t8 = x < 100
+    flag = t8
+    ifFalse flag goto L3
+  Block 4:
+    t9 = a + b
+    r1 = t9
+    print r1
+    goto L4
+  Block 5:
+    L3:
+    t10 = a + b
+    r2 = t10
+    print r2
+  Block 6:
+    L4:
+    print x
+
+Control Flow Graph (7 nodes):
+  Block 0              pred=entry           succ=[1]
+  Block 1  [L1]        pred=[0, 2]          succ=[2, 3]
+  Block 2              pred=[1]             succ=[1]
+  Block 3  [L2]        pred=[1]             succ=[4, 5]
+  Block 4              pred=[3]             succ=[6]
+  Block 5  [L3]        pred=[3]             succ=[6]
+  Block 6  [L4]        pred=[4, 5]          succ=exit
+
+DAG Analysis per Basic Block:
+  Block 0 (7 quad(s)):
+    Leaf nodes : 3, 5, 0, 10
+    #5[t1,dead_var] = 3 + 5
+  Block 1 (3 quad(s)):
+    Leaf nodes : i, n
+    #3[t2] = i < n
+  Block 2 (10 quad(s)):
+    Leaf nodes : b, a, i, 2, x, 1
+    #3[t3,inv] = b + a
+    #6[t4,doubled] = i * 2
+    #8[t5] = x + #3
+    #9[t6,x] = #8 + #6
+    #11[t7,i] = i + 1
+  Block 3 (4 quad(s)):
+    Leaf nodes : x, 100
+    #3[t8,flag] = x < 100
+  Block 4 (4 quad(s)):
+    Leaf nodes : a, b
+    #3[t9,r1] = a + b
+  Block 5 (4 quad(s)):
+    Leaf nodes : a, b
+    #3[t10,r2] = a + b
+  Block 6 (2 quad(s)):
+    (no arithmetic expressions � control/memory ops only)
+
+Liveness Analysis:
+  Block 0: live_in={}                             live_out={a, b, i, n, x}
+  Block 1: live_in={a, b, i, n, x}                live_out={a, b, i, n, x}
+  Block 2: live_in={a, b, i, n, x}                live_out={a, b, i, n, x}
+  Block 3: live_in={a, b, x}                      live_out={a, b, x}
+  Block 4: live_in={a, b, x}                      live_out={x}
+  Block 5: live_in={a, b, x}                      live_out={x}
+  Block 6: live_in={x}                            live_out={}
+
+Optimization Report (8 action(s)):
+  [Constant Folding] t1 = 3 + 5 => t1 = 8
+  [Strength Reduction] replaced t4 = i * 2 with t4 = i << 1
+  [Loop-Invariant Motion] hoisted t3 = b + a out of loop L1
+  [Loop-Invariant Motion] hoisted inv = t3 out of loop L1
+  [Induction Variable] 'i' incremented by +1 each iteration of loop L1
+  [Partial Redundancy Elimination] pre-computed 't9 = a + b' before branch as 'tP1 = a + b'; replaced in both branches
+  [Dead Code Elimination] removed unused: t1 = 8
+  [Dead Code Elimination] removed unused: dead_var = 8
+
+Optimized TAC:
+    0: a = 3
+    1: b = 5
+    2: i = 0
+    3: n = 10
+    4: x = 0
+    5: t3 = b + a
+    6: inv = t3
+    7: L1:
+    8: t2 = i < n
+    9: ifFalse t2 goto L2
+   10: t4 = i << 1
+   11: doubled = t4
+   12: t5 = x + inv
+   13: t6 = t5 + doubled
+   14: x = t6
+   15: t7 = i + 1
+   16: i = t7
+   17: goto L1
+   18: L2:
+   19: t8 = x < 100
+   20: flag = t8
+   21: tP1 = a + b
+   22: ifFalse flag goto L3
+   23: t9 = tP1
+   24: r1 = t9
+   25: print r1
+   26: goto L4
+   27: L3:
+   28: t10 = tP1
+   29: r2 = t10
+   30: print r2
+   31: L4:
+   32: print x
+
+Instructions before: 34, after: 33
+
+================================================================
+PHASE 6: TARGET CODE  (Register-Based Assembly + Activation Record)
+================================================================
+    AR_INIT 13    ; push 13-byte activation record  (SP = SP - 13)
+    FP_SET         ; frame pointer = SP  (anchors activation record)
+    MOV 3, R1
+    MOV R1, a
+    MOV 5, R2
+    MOV R2, b
+    MOV 0, R3
+    MOV R3, i
+    MOV 10, R4
+    MOV R4, n
+    MOV 0, R5
+    MOV R5, x
+    MOV b, R7
+    MOV R7, R6
+    MOV a, R8
+    ADD R8, R6
+    MOV R6, inv
+LABEL L1
+    MOV i, R10
+    MOV R10, R9
+    MOV n, R11
+    CMPLT R11, R9
+    JZ R9, L2
+    MOV i, R13
+    MOV R13, R12
+    SHL 1, R12
+    MOV R12, doubled
+    MOV x, R15
+    MOV R15, R14
+    MOV inv, R16
+    ADD R16, R14
+    MOV R14, R17
+    MOV doubled, R18
+    ADD R18, R17
+    MOV R17, x
+    MOV i, R20
+    MOV R20, R19
+    MOV 1, R21
+    ADD R21, R19
+    MOV R19, i
+    JMP L1
+LABEL L2
+    MOV x, R23
+    MOV R23, R22
+    MOV 100, R24
+    CMPLT R24, R22
+    MOV R22, flag
+    MOV a, R26
+    MOV R26, R25
+    MOV b, R27
+    ADD R27, R25
+    MOV flag, R28
+    JZ R28, L3
+    MOV R25, R29
+    MOV R29, r1
+    MOV r1, R30
+    PRINT R30
+    JMP L4
+LABEL L3
+    MOV R25, R31
+    MOV R31, r2
+    MOV r2, R32
+    PRINT R32
+LABEL L4
+    MOV x, R33
+    PRINT R33
+    AR_RET         ; pop activation record  (SP = SP + 13)
+
+Address Descriptors (final state):
+  NAME          LOCATIONS
+  ----------------------------------
+  a             {R26, R8, mem}
+  b             {R27, R7, mem}
+  dead_var      {mem}
+  doubled       {R18, mem}
+  flag          {R28, mem}
+  i             {R10, R13, R20, mem}
+  inv           {R16, mem}
+  n             {R11, mem}
+  r1            {R30, mem}
+  r2            {R32, mem}
+  t10           {R31}
+  t2            {R9}
+  t3            {R6}
+  t4            {R12}
+  t5            {R14}
+  t6            {R17}
+  t7            {R19}
+  t8            {R22}
+  t9            {R29}
+  tP1           {R25}
+  x             {R15, R23, R33, mem}
+
+================================================================
+COMPILATION SUCCESSFUL
+================================================================
+
